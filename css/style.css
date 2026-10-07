@@ -287,7 +287,8 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
     display: flex;
     align-items: stretch;
     gap: 10px;
-    padding-bottom: 12px;
+    padding-bottom: 22px; /* 글자와 밑줄·별 사이 간격 */
+    margin-bottom: 18px; /* 밑줄과 메인 영역 사이 간격 (gap 18px 포함 총 36px) */
 }
 
 .title::before {
