@@ -137,6 +137,7 @@ body:not(.is-admin) .admin-tools {
 .gnb {
     display: flex;
     gap: clamp(24px, 3.4vw, 44px);
+    margin-bottom: 25px;
 }
 
 .gnb a {
