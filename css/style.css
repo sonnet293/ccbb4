@@ -76,6 +76,8 @@
     --shadow: 0 6px 24px rgba(95, 127, 178, .12);
     --font: "Suit", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
     --serif: "Noto Serif KR", "Nanum Myeongjo", serif;
+    --board-w: 1201px;
+    --gutter: 16px;
 }
 
 *,
@@ -100,6 +102,7 @@ html {
 
 body {
     min-height: 100vh;
+    min-height: 100dvh;
     font-family: var(--font);
     color: var(--ink);
     background: #EEF1F7 url("../img/background.png") center bottom / cover no-repeat fixed;
@@ -133,7 +136,7 @@ body:not(.is-admin) .admin-tools {
 
 .gnb {
     display: flex;
-    gap: 44px;
+    gap: clamp(24px, 3.4vw, 44px);
 }
 
 .gnb a {
@@ -191,7 +194,7 @@ body:not(.is-admin) .admin-tools {
     padding: 14px 18px;
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: rgba(255,255,255.92);
+    background: rgba(255, 255, 255, .92);
     backdrop-filter: blur(6px);
     box-shadow: var(--shadow);
     opacity: 0;
@@ -226,7 +229,7 @@ body:not(.is-admin) .admin-tools {
 
 .login-btn {
     position: absolute;
-    right: 24px;
+    right: max(var(--gutter), calc((100% - var(--board-w)) / 2));
     top: 50%;
     transform: translateY(-50%);
     padding: 4px 10px;
@@ -247,13 +250,16 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
     flex-direction: column;
     align-items: center;
     gap: 18px;
-    padding: 0 16px 40px;
+    padding: 0 var(--gutter) 40px;
 }
 
+/* 방명록 아이콘: 와이드 화면에서도 보드 오른쪽 끝에 맞춤 */
 .gb-btn {
     position: absolute;
     top: 0;
-    right: 16px;
+    right: max(var(--gutter), calc((100% - var(--board-w)) / 2));
+    z-index: 1;
+    display: grid;
     place-items: center;
     width: 40px;
     height: 40px;
@@ -270,11 +276,13 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
     transform: translateY(-2px) scale(1.06);
 }
 
-/* 타이틀 */
+/* 타이틀: 보드 왼쪽 끝에 맞추고, 밑줄은 보드 폭의 절반
+   (단, 글자 영역(약 540px)보다 짧아지지 않게) */
 .title {
+    --title-cut: clamp(0px, calc(100% - 540px), 50%);
     position: relative;
-    align-self: flex-start;
-    width: 50%;
+    align-self: center;
+    width: min(var(--board-w), 100%);
     display: flex;
     align-items: stretch;
     gap: 10px;
@@ -285,7 +293,7 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
     content: "";
     position: absolute;
     left: 0;
-    right: 25px;
+    right: calc(var(--title-cut) + 25px);
     bottom: 0;
     height: 1px;
     background: #000;
@@ -294,7 +302,7 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
 .title::after {
     content: "✦";
     position: absolute;
-    right: 0;
+    right: var(--title-cut);
     bottom: 0;
     transform: translateY(50%);
     color: #000;
@@ -303,7 +311,9 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
 }
 
 .title h2 {
+    flex: none;
     margin: 0;
+    white-space: nowrap;
     font-family: var(--font);
     color: #112F65;
     font-size: 44px;
@@ -313,6 +323,7 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
 }
 
 .subtitle {
+    min-width: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -329,12 +340,13 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
 /* 이미지 삽입 영역 */
 .board {
     display: grid;
-    grid-template-columns: 810fr 376fr;
+    grid-template-columns: minmax(0, 810fr) minmax(0, 376fr);
     gap: 15px;
-    width: min(1201px, 100%);
+    width: min(var(--board-w), 100%);
 }
 
 .board-side {
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 9px;
@@ -349,7 +361,8 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
     backdrop-filter: blur(6px);
 }
 
-.slot-main { aspect-ratio: 810 / 429; }
+/* 810:429 비율이 기본, 오른쪽 열이 더 길어지면 높이를 맞춰 늘어남(이미지는 cover) */
+.slot-main { aspect-ratio: 810 / 429; align-self: stretch; }
 .slot-banner { aspect-ratio: 376 / 71; }
 
 .slot img {
@@ -403,7 +416,6 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
 /* 캘린더 영역 */
 .calendar {
     flex: 1;
-    min-height: 269px;
     display: flex;
     flex-direction: column;
     padding: 10px 12px 8px;
@@ -476,7 +488,7 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
 
 .cal-days {
     flex: 1;
-    grid-auto-rows: 1fr;
+    grid-auto-rows: minmax(24px, 1fr);
 }
 
 .cal-day {
@@ -675,6 +687,7 @@ body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
 .modal {
     width: min(380px, calc(100% - 32px));
     max-height: min(640px, calc(100vh - 48px));
+    max-height: min(640px, calc(100dvh - 48px));
     padding: 0;
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -910,9 +923,9 @@ button.ghost {
 
 /* ===== sub pages ===== */
 .page {
-    width: min(1201px, 100%);
+    width: min(calc(var(--board-w) + var(--gutter) * 2), 100%);
     margin: 0 auto;
-    padding: 12px 16px 60px;
+    padding: 12px var(--gutter) 60px;
 }
 
 .page-title {
@@ -936,14 +949,62 @@ button.ghost {
     color: var(--muted);
 }
 
-/* 임시 반응형 */
+/* ===== 반응형 ===== */
+
+/* 터치 기기: hover가 없으므로 관리자 도구 항상 표시 */
+@media (hover: none) {
+    .admin-tools { opacity: 1; }
+}
+
+/* 작은 노트북 (~1100px): 달력 여백 축소 */
+@media (max-width: 1100px) {
+    .calendar { padding: 8px 10px 6px; }
+    .cal-head { height: 26px; }
+    .cal-month strong { font-size: 22px; }
+}
+
+/* 태블릿 (~900px): 보드 한 줄, 배너 2개 나란히 + 달력 아래 */
+@media (max-width: 900px) {
+    .board { grid-template-columns: minmax(0, 1fr); }
+    .slot-main { align-self: auto; }
+
+    .board-side {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px 15px;
+    }
+
+    .calendar {
+        grid-column: 1 / -1;
+        min-height: 300px;
+        padding: 10px 12px 8px;
+    }
+
+    .cal-days { grid-auto-rows: minmax(34px, 1fr); }
+}
+
+/* 모바일 (~760px): 헤더 세로 배치 */
 @media (max-width: 760px) {
     .site-header { height: auto; flex-direction: column; gap: 10px; padding: 16px; }
-    .gnb { gap: 20px; flex-wrap: wrap; justify-content: center; }
+    .gnb { gap: 12px 20px; flex-wrap: wrap; justify-content: center; }
     .login-btn { position: static; transform: none; }
-    .title h2 { font-size: 34px; }
+
+    .title { --title-cut: 0px; padding-right: 48px; }
+    .title h2 { font-size: clamp(28px, 8vw, 34px); }
     .subtitle { font-size: 11px; }
-    .board { grid-template-columns: 1fr; }
+    .subtitle .kanji { font-size: 17px; }
+
     .pl-progress { width: 70px; }
     .pl-panel { width: min(300px, calc(100vw - 32px)); }
+
+    .gb-form input { width: 100%; }
+}
+
+/* 작은 모바일 (~560px): 배너 세로 배치 */
+@media (max-width: 560px) {
+    .board-side { grid-template-columns: minmax(0, 1fr); }
+    .calendar { min-height: 280px; }
+    .cal-days { grid-auto-rows: minmax(30px, 1fr); }
+    .player { gap: 4px; }
+    .pl-progress { width: 50px; }
 }
