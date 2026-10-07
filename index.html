@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>시시비비</title>
+</head>
+<body>
+
+    <header class="site-header">
+        <nav class="gnb">
+            <div class="gnb-item">
+                <a href="character.html">캐릭터</a>
+                <div class="gnb-sub">
+                    <a href="original.html">ORIGINAL</a>
+                    <a href="au.html">AU·TRPG</a>
+                </div>
+            </div>
+            <a href="universe.html">세계관</a>
+            <a href="relationship.html">관계란</a>
+            <a href="archive.html">아카이브</a>
+            <a href="other.html">기타</a>
+        </nav>
+        <button type="submit" class="login-btn" id="loginBtn">로그인</button>
+    </header>
+
+    <main class="home">
+
+        <!--방명록 아이콘-->
+        <button type="button" class="gb-btn" id="guestbookBtn" aria-label="방명록 열기" title="방명록">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                <path d="M0 0h16v16H0z" fill="none" />
+                <path fill="#d9e5f7" d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234c-.2.032-.352-.176-.273-.362c.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0a1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0a1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
+            </svg>
+        </button>
+
+        <div class="title">
+            <h2>시시비비</h2>
+            <div class="subtitle">
+                <span class="kanji">時視庇比</span>
+                <span>서로의 때를 보고, 감싸며, 끝내 나란히 서라</span>
+            </div>
+        </div>
+
+        <section class="board">
+
+            <div class="slot slot-main" data-slot="main">
+                <img alt="메인 이미지">
+                <span class="slot-empty">MAIN IMAGE · 810 × 429</span>
+                <div class="admin-tools">
+                    <button type="button" data-action="image">이미지 변경</button>
+                </div>
+            </div>
+
+            <div class="board-side">
+                <div class="slot slot-banner" data-slot="banner1">
+                    <a target="_blank" rel="noopener"><img alt="배너 1"></a>
+                    <span class="slot-empty">BANNER · 376 × 71</span>
+                    <div class="admin-tools">
+                        <button type="button" data-action="image">이미지</button>
+                        <!--링크 생략-->
+                    </div>
+                </div>
+                <div class="slot slot-banner" data-slot="banner2">
+                    <a target="_blank" rel="noopener"><img alt="배너 2"></a>
+                    <span class="slot-empty">BANNER · 376 × 71</span>
+                    <div class="admin-tools">
+                        <button type="button" data-action="image">이미지</button>
+                        <!--링크 생략-->
+                    </div>
+                </div>
+
+                <!--달력-->
+                <div class="calendar" id="calendar"></div>
+            </div>
+        </section>
+
+        <!--뮤직플레이어-->
+        <div class="player" id="player">
+            <button type="button" class="pl-btn" data-pl="prev" aria-label="이전 곡">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h1.6v10H3zM13 3.2v9.6L5.8 8z"/></svg>
+            </button>
+            <button type="button" class="pl-btn pl-play" data-pl="toggle" aria-label="재생">
+                <svg class="ic-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.5v11L13 8z"/></svg>
+                <svg class="ic-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>
+            </button>
+            <button type="button" class="pl-btn" data-pl="next" aria-label="다음 곡">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11.4 3H13v10h-1.6zM3 3.2v9.6L10.2 8z"/></svg>
+            </button>
+            <div class="pl-title"><span id="plTitle">재생할 음악이 없습니다</span></div>
+            <div class="pl-progress" id="plProgress"><div class="pl-bar" id="plBar"></div></div>
+            <span class="pl-time" id="plTime">0:00</span>
+            <button type="button" class="pl-btn" data-pl="list" aria-label="플레이리스트">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h9V5H2zM2 7.25h9v1.5H2zM2 11h6v1.5H2zM12 9.2V2.5h1.5v1.6h1.5v1.5h-1.5v6.1a1.9 1.9 0 1 1-1.5-1.86z"/></svg>
+            </button>
+
+            <div class="pl-panel" id="plPanel" hidden>
+                <div class="pl-panel-head">
+                    <strong>플레이리스트</strong>
+                    <button type="button" class="chip admin-only" id="plUpload">+ 음악 추가</button>
+                </div>
+                <ol class="pl-list" id="plList"></ol>
+            </div>
+            <audio id="plAudio" preload="metadata"></audio>
+        </div>
+
+    </main>
+
+    <!--방명록 팝업-->
+    <dialog class="modal modal-wide" id="guestbookModal">
+        <div class="modal-body">
+            <header class="modal-head">
+                <button type="button" class="icon-btn" data-close aria-label="닫기">×</button>
+            </header>
+            <form class="gb-form" id="gbForm">
+                <input name="name" maxlength="20" placeholder="이름" required autocomplete="nickname" />
+                <textarea name="message" maxlength="500" rows="3" placeholder="남기고 싶은 말을 적어주세요" required></textarea>
+                <div class="gb-form-foot">
+                    <span class="gb-count" id="gbCount">0 / 500</span>
+                    <button type="submit" class="gb-send" aria-label="방명록 남기기" title="남기기">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path fill="#d9e5f7" fill-rule="evenodd" d="M18.483 19.79v-.002l.018-.043L21.5 4.625v-.048c0-.377-.14-.706-.442-.903c-.265-.173-.57-.185-.784-.169a2.7 2.7 0 0 0-.586.12a3 3 0 0 0-.24.088l-.013.005l-16.72 6.559l-.005.002a1 1 0 0 0-.149.061a2.3 2.3 0 0 0-.341.19c-.215.148-.624.496-.555 1.048c.057.458.372.748.585.899a2 2 0 0 0 .403.22l.032.014l.01.003l.007.003l2.926.985q-.016.276.057.555l1.465 5.559a1.5 1.5 0 0 0 2.834.196l2.288-2.446l3.929 3.012l.056.024c.357.156.69.205.995.164c.305-.042.547-.17.729-.315a1.74 1.74 0 0 0 .49-.635l.008-.017l.003-.006zM7.135 13.875a.3.3 0 0 1 .13-.33l9.921-6.3s.584-.355.563 0c0 0 .104.062-.209.353c-.296.277-7.071 6.818-7.757 7.48a.3.3 0 0 0-.077.136L8.6 19.434z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            <ul class="gb-list" id="gbList"></ul>
+        </div>
+    </dialog>
+
+    <!--달력 팝업-->
+    <dialog class="modal" id="dayModal">
+        <div class="modal-body">
+            <header class="modal-head">
+                <h3 id="dayTitle"></h3>
+                <button type="button" class="icon-btn" data-close aria-label="닫기">×</button>
+            </header>
+            <ul class="event-list" id="eventList"></ul>
+            <form class="event-form admin-only" id="eventForm">
+                <input name="name" maxlength="60" placeholder="일정 추가" required />
+                <button type="button" class="primary">추가</button>
+            </form>
+        </div>
+    </dialog>
+
+    <script type="module" src="js/main.js"></script>
+    
+</body>
+</html>
