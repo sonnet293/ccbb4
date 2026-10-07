@@ -9,20 +9,25 @@
 <body>
 
     <header class="site-header">
-        <nav class="gnb">
-            <div class="gnb-item">
-                <a href="character.html">캐릭터</a>
-                <div class="gnb-sub">
-                    <a href="original.html">ORIGINAL</a>
-                    <a href="au.html">AU·TRPG</a>
+        <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navPanel" aria-label="메뉴 열기">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-panel" id="navPanel">
+            <nav class="gnb">
+                <div class="gnb-item">
+                    <a href="character.html">캐릭터</a>
+                    <div class="gnb-sub">
+                        <a href="original.html">ORIGINAL</a>
+                        <a href="au.html">AU·TRPG</a>
+                    </div>
                 </div>
-            </div>
-            <a href="universe.html">세계관</a>
-            <a href="relationship.html">관계란</a>
-            <a href="archive.html">아카이브</a>
-            <a href="other.html">기타</a>
-        </nav>
-        <button type="submit" class="login-btn" id="loginBtn">로그인</button>
+                <a href="universe.html">세계관</a>
+                <a href="relationship.html">관계란</a>
+                <a href="archive.html">아카이브</a>
+                <a href="other.html">기타</a>
+            </nav>
+            <button type="submit" class="login-btn" id="loginBtn">로그인</button>
+        </div>
     </header>
 
     <main class="home">
