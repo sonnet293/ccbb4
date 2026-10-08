@@ -1,6 +1,4 @@
 // js/utils.js
-
-// DOM 생성 헬퍼. 문자열 자식은 텍스트로만 들어가므로 사용자 입력을 넣어도 안전합니다.
 export function h(tag, props = {}, ...children) {
   const el = document.createElement(tag);
   for (const [key, value] of Object.entries(props || {})) {
@@ -29,7 +27,7 @@ export function toast(message, ms = 2400) {
   toastTimer = setTimeout(() => toastEl.classList.remove("show"), ms);
 }
 
-// 파일 선택창을 열고 선택된 파일 배열을 돌려줍니다.
+// 파일 선택창을 열고 선택된 파일 배열을 돌려줌
 export function pickFiles(accept, multiple = false) {
   return new Promise((resolve) => {
     const input = h("input", { type: "file", accept, multiple });
@@ -57,7 +55,6 @@ export function formatDateTime(date) {
   return `${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-// <dialog>에 닫기 버튼([data-close])과 바깥 클릭 닫기를 연결합니다.
 export function bindDialog(dialog) {
   dialog.addEventListener("click", (e) => {
     if (e.target === dialog || e.target.closest("[data-close]")) dialog.close();
@@ -68,7 +65,7 @@ export function bindDialog(dialog) {
 export function errorMessage(err) {
   const code = err?.code || "";
   if (code === "permission-denied" || err?.statusCode === "403" || /row-level security|Unauthorized/i.test(err?.message || "")) {
-    return "권한이 없습니다. 관리자 로그인 및 설정을 확인해주세요.";
+    return "권한이 없습니다.";
   }
   return err?.message || "알 수 없는 오류가 발생했습니다.";
 }

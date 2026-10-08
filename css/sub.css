@@ -1,0 +1,86 @@
+.page {
+    --page-top: 80px;
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    width: min(calc(var(--board-w) + var(--gutter) * 2), 100%);
+    margin: var(--page-top) auto 0;
+    padding: 0 var(--gutter) 40px;
+}
+
+.page-body {
+    --stage-w: min(var(--board-w), 100cqw);
+    --cal-min: 252px;
+    width: min(var(--board-w), 100%);
+    min-height: calc(102px + 80px - var(--page-top) + max((var(--stage-w) - 15px) * 429 / 1186, (var(--stage-w) - 15px) * 71 / 593 + 18px + var(--cal-min)));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.img-slot {
+    position: relative;
+    overflow: hidden;
+    background: rgba(217, 229, 247, .45);
+}
+
+.img-slot img {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.img-slot.has-image img { display: block; }
+.img-slot.has-image .img-empty { display: none; }
+
+.img-empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    letter-spacing: .12em;
+    color: var(--sky-deep);
+    pointer-events: none;
+}
+
+.img-slot:hover .admin-tools { opacity: 1; }
+.img-slot .admin-tools { z-index: 2; }
+
+[data-field] { white-space: pre-wrap; overflow-wrap: anywhere; }
+[contenteditable] { outline: none; cursor: text; border-radius: 3px; }
+[contenteditable]:hover { background: rgba(217, 229, 247, .35); }
+[contenteditable]:focus { background: rgba(217, 229, 247, .55); }
+[contenteditable]:empty::before {
+    content: attr(data-placeholder);
+    color: var(--sky-deep);
+}
+
+.page-empty {
+    padding: 80px 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.page-empty,
+.page > section,
+.page-body > section { animation: fade-up var(--enter-dur) var(--ease-out) .3s backwards; }
+
+@media (max-width: 1100px) {
+    .page-body { --cal-min: 244px; }
+}
+
+@media (max-width: 900px) {
+    .page-body { min-height: 0; }
+}
+
+@media (max-width: 760px) {
+    .page { margin-top: 20px; }
+}

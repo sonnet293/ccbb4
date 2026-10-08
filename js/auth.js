@@ -56,7 +56,7 @@ form.addEventListener("submit", async (e) => {
     await signInWithEmailAndPassword(auth, form.email.value.trim(), form.password.value);
     form.reset();
     dialog.close();
-    toast("로그인되었습니다.");
+    toast("로그인 성공");
   } catch (err) {
     errorEl.textContent = ERRORS[err.code] || "로그인에 실패했습니다.";
   } finally {
@@ -67,7 +67,7 @@ form.addEventListener("submit", async (e) => {
 loginBtn?.addEventListener("click", async () => {
   if (currentUser) {
     await signOut(auth);
-    toast("로그아웃되었습니다.");
+    toast("로그아웃");
   } else {
     errorEl.textContent = "";
     dialog.showModal();

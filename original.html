@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/player.css">
+    <link rel="stylesheet" href="css/sub.css">
+    <link rel="stylesheet" href="css/character.css">
+    <title>ORIGINAL</title>
+</head>
+<body>
+
+    <header class="site-header">
+        <a href="index.html" class="site-logo" aria-label="시시비비">
+            <img src="img/logo.svg" alt="시시비비" width="138" height="40">
+        </a>
+        <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navPanel" aria-label="메뉴 열기">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-panel" id="navPanel">
+            <nav class="gnb">
+                <div class="gnb-item">
+                    <a href="original.html">캐릭터</a>
+                    <div class="gnb-sub">
+                        <a href="original.html">ORIGINAL</a>
+                        <a href="au.html">AU·TRPG</a>
+                    </div>
+                </div>
+                <a href="universe.html">세계관</a>
+                <a href="relationship.html">관계란</a>
+                <a href="archive.html">아카이브</a>
+                <a href="other.html">기타</a>
+            </nav>
+            <button type="submit" class="login-btn" id="loginBtn">로그인</button>
+        </div>
+    </header>
+
+    <main class="page">
+
+        <!--본문 영역-->
+        <div class="page-body">
+            <section class="cards">
+                <h2 class="cards-title">ORIGINAL</h2>
+                <ul class="card-list" data-ids="1,2,3,4"></ul>
+            </section>
+        </div>
+
+        <!--뮤직플레이어-->
+        <div class="player" id="player">
+            <button type="button" class="pl-btn" data-pl="prev" aria-label="이전 곡">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h1.6v10H3zM13 3.2v9.6L5.8 8z"/></svg>
+            </button>
+            <button type="button" class="pl-btn pl-play" data-pl="toggle" aria-label="재생">
+                <svg class="ic-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.5v11L13 8z"/></svg>
+                <svg class="ic-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>
+            </button>
+            <button type="button" class="pl-btn" data-pl="next" aria-label="다음 곡">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11.4 3H13v10h-1.6zM3 3.2v9.6L10.2 8z"/></svg>
+            </button>
+            <div class="pl-title"><span id="plTitle">재생할 음악이 없습니다</span></div>
+            <div class="pl-progress" id="plProgress"><div class="pl-bar" id="plBar"></div></div>
+            <span class="pl-time" id="plTime">0:00</span>
+            <button type="button" class="pl-btn" data-pl="list" aria-label="플레이리스트">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h9V5H2zM2 7.25h9v1.5H2zM2 11h6v1.5H2zM12 9.2V2.5h1.5v1.6h1.5v1.5h-1.5v6.1a1.9 1.9 0 1 1-1.5-1.86z"/></svg>
+            </button>
+
+            <div class="pl-panel" id="plPanel" hidden>
+                <div class="pl-panel-head">
+                    <strong>플레이리스트</strong>
+                    <button type="button" class="chip admin-only" id="plUpload">+ 음악 추가</button>
+                </div>
+                <ol class="pl-list" id="plList"></ol>
+            </div>
+            <audio id="plAudio" preload="metadata"></audio>
+        </div>
+
+    </main>
+
+    <script type="module" src="js/sub.js"></script>
+    <script type="module" src="js/cards.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,104 @@
+.modal {
+    width: min(380px, calc(100% - 32px));
+    max-height: min(640px, calc(100vh - 48px));
+    max-height: min(640px, calc(100dvh - 48px));
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel-solid);
+    box-shadow: var(--shadow);
+    color: var(--ink);
+}
+
+.modal-wide { width: min(520px, calc(100% - 32px)); }
+
+.modal::backdrop {
+    background: rgba(60, 80, 120, .25);
+    backdrop-filter: blur(2px);
+}
+
+.modal[open] { animation: pop .18s ease-out; }
+
+@keyframes pop {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 20px 20px;
+}
+
+.modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-head h3 {
+    margin: 0;
+    font-family: var(--font);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+
+.icon-btn {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--muted);
+}
+
+.icon-btn:hover { background: var(--sky); color: var(--ink); }
+
+/* 닫기 버튼은 제목 유무와 상관없이 항상 오른쪽 */
+.modal-head [data-close] { margin-left: auto; }
+
+.modal input,
+.modal textarea {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #FAFCFF;
+    font-size: 13px;
+    outline: none;
+    resize: vertical;
+}
+
+.modal input:focus,
+.modal textarea:focus { border-color: var(--sky-deep); background: #fff; }
+
+button.primary,
+button.ghost {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+button.primary {
+    border: 0;
+    background: var(--sky-deep);
+    color: #fff;
+}
+
+button.primary:hover { background: var(--sky-ink); }
+button.primary:disabled { opacity: .5; cursor: default; }
+
+button.ghost {
+    border: 1px solid var(--line);
+    background: none;
+    color: var(--muted);
+}
+
+.login-form { gap: 10px; }
+.form-error { min-height: 1em; margin: 0; font-size: 12px; color: var(--sun); }
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; }

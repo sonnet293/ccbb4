@@ -85,7 +85,7 @@ function renderEntry(entry) {
 function toggleReplyForm(item, entry) {
   const existing = item.querySelector(".gb-reply-form");
   if (existing) return existing.remove();
-  const input = h("input", { name: "reply", maxlength: "500", placeholder: "답글 (비우면 삭제)", value: entry.reply || "" });
+  const input = h("input", { name: "reply", maxlength: "500", placeholder: "답글", value: entry.reply || "" });
   const replyForm = h(
     "form",
     {

@@ -1,0 +1,258 @@
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Thin.woff2') format('woff2');
+    font-weight: 100;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Heavy.woff2') format('woff2');
+    font-weight: 900;
+    font-display: swap;
+}
+
+:root {
+    --ink: #000;
+    --sky: #D9E5F7;
+    --sky-deep: #9DB7E0;
+    --sky-ink: #5F7FB2;
+    --muted: #7A879A;
+    --line: rgba(157, 183, 224, .45);
+    --panel: rgba(255, 255, 255, .72);
+    --panel-solid: #fff;
+    --sun: #D97B7B;
+    --sat: #6F92CC;
+    --radius: 6px;
+    --shadow: 0 6px 24px rgba(95, 127, 178, .12);
+    --font: "Suit", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --serif: "Noto Serif KR", "Nanum Myeongjo", serif;
+    --board-w: 1201px;
+    --gutter: 16px;
+    --ease-out: cubic-bezier(.22, .61, .36, 1);
+    --enter-dur: .8s;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+html,
+body {
+    margin: 0;
+}
+
+/* 스크롤바 */
+/* TODO: 스크롤바 width 조정 */
+html {
+    scrollbar-color: #d9e5f7 transparent;
+}
+
+html { background: #EEF1F7; }
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    font-family: var(--font);
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 배경: background-attachment: fixed는 iOS에서 페이지 전체 높이로 늘어나 깨지므로 고정 레이어로 대체 */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: url("../img/background.png") center bottom / cover no-repeat;
+    pointer-events: none;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+body:not(.is-admin) .admin-only,
+body:not(.is-admin) .admin-tools {
+    display: none !important;
+}
+
+/* 관리자 도구 */
+.admin-tools {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity .2s;
+}
+
+.slot:hover .admin-tools,
+.admin-tools:focus-within { opacity: 1; }
+
+.admin-tools button,
+.chip {
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .92);
+    font-size: 12px;
+    color: var(--sky-ink);
+}
+
+.admin-tools button:hover,
+.chip:hover { background: var(--sky); }
+
+/* 삭제(×) 버튼: 플레이리스트 · 일정 */
+.del-btn {
+    padding: 0 4px;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+}
+
+.del-btn:hover { color: var(--sun); }
+
+/* 토스트 */
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translate(-50%, 10px);
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    padding: 9px 16px;
+    text-align: center;
+    border-radius: 999px;
+    background: rgba(40, 52, 74, .88);
+    color: #fff;
+    font-size: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    z-index: 100;
+}
+
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* 등장 애니메이션
+   fill-mode는 backwards: 끝난 뒤엔 원래 transform으로 돌아가서 hover 효과와 충돌하지 않음 */
+@keyframes fade-down {
+    from { opacity: 0; transform: translateY(-14px); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes fade-left {
+    from { opacity: 0; transform: translateX(-32px); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes fade-right {
+    from { opacity: 0; transform: translateX(32px); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes line-draw {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+@keyframes star-pop {
+    from { opacity: 0; transform: translateY(50%) rotate(-180deg) scale(.3); }
+    to { opacity: 1; transform: translateY(50%) rotate(0) scale(1); }
+}
+
+/* 움직임 줄이기 설정 존중 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-delay: 0s !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* 터치 기기: hover가 없으므로 관리자 도구 항상 표시 */
+@media (hover: none) {
+    .admin-tools { opacity: 1; }
+}
+
+/* iOS: 16px 미만 입력칸에 포커스하면 화면이 확대되므로 글자 크기 보정 */
+@supports (-webkit-touch-callout: none) {
+    @media (pointer: coarse) {
+        input,
+        textarea { font-size: 16px !important; }
+    }
+}

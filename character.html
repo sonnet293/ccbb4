@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luxurious+Script&display=swap">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/player.css">
+    <link rel="stylesheet" href="css/sub.css">
+    <link rel="stylesheet" href="css/character.css">
+    <title>CHARACTER</title>
+</head>
+<body>
+
+    <header class="site-header">
+        <a href="index.html" class="site-logo" aria-label="시시비비 홈으로">
+            <img src="img/logo.svg" alt="시시비비" width="138" height="40">
+        </a>
+        <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navPanel" aria-label="메뉴 열기">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-panel" id="navPanel">
+            <nav class="gnb">
+                <div class="gnb-item">
+                    <a href="original.html" aria-current="page">캐릭터</a>
+                    <div class="gnb-sub">
+                        <a href="original.html" aria-current="page">ORIGINAL</a>
+                        <a href="au.html">AU·TRPG</a>
+                    </div>
+                </div>
+                <a href="universe.html">세계관</a>
+                <a href="relationship.html">관계란</a>
+                <a href="archive.html">아카이브</a>
+                <a href="other.html">기타</a>
+            </nav>
+            <button type="submit" class="login-btn" id="loginBtn">로그인</button>
+        </div>
+    </header>
+
+    <main class="page page-detail">
+
+        <!--본문 영역-->
+        <div class="page-body">
+            <div class="char-layout" id="character">
+
+                <!--좌측 네비게이션-->
+                <nav class="char-nav" aria-label="캐릭터 메뉴">
+                    <a href="original.html" class="char-back" aria-label="목록으로" title="목록으로">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 1024 1024" aria-hidden="true">
+                            <path d="M0 0h1024v1024H0z" fill="none" />
+                            <path fill="#d9e5f7" d="M685.2 104.7a64 64 0 0 1 0 90.5L368.4 512l316.8 316.8a64 64 0 0 1-90.4 90.5l-362.1-362a64 64 0 0 1 0-90.5l362-362.1a64 64 0 0 1 90.5 0" />
+                        </svg>
+                    </a>
+                    <a data-tab="profile">프로필</a>
+                    <a data-tab="story">스토리</a>
+                    <a data-tab="memo">메모</a>
+                    <a data-tab="entry">엔트리</a>
+                </nav>
+
+                <!--프로필-->
+                <section class="char-view profile" data-view="profile">
+                    <header class="profile-head">
+                        <h2 class="profile-name" data-field="name" data-placeholder="Name"></h2>
+                        <p class="profile-meta">
+                            <span data-field="gender" data-placeholder="성별"></span>
+                            <span data-field="height" data-placeholder="키"></span>
+                        </p>
+                    </header>
+
+                    <div class="profile-body">
+                        <!--메인 이미지-->
+                        <div class="img-slot profile-main" data-image="main">
+                                <img alt="">
+                                <span class="img-empty">335 × 503</span>
+                                <div class="admin-tools"><button type="button" data-action="image">이미지 변경</button></div>
+                            </div>
+
+                        <!--정보 박스-->
+                        <div class="profile-card">
+                            <div class="img-slot profile-portrait" data-image="portrait">
+                                <img alt="">
+                                <span class="img-empty">234 × 234</span>
+                                <div class="admin-tools"><button type="button" data-action="image">이미지 변경</button></div>
+                            </div>
+                            <dl class="profile-fields">
+                                <div>
+                                    <dt>성격</dt>
+                                    <dd data-field="personality" data-placeholder="성격" data-multiline></dd>
+                                </div>
+                                <div>
+                                    <dt>생일</dt>
+                                    <dd data-field="birthday" data-placeholder="생일"></dd>
+                                </div>
+                                <div>
+                                    <dt>TMI</dt>
+                                    <dd data-field="tmi" data-placeholder="TMI" data-multiline></dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                        <!--폴라로이드 3장-->
+                        <div class="polaroids">
+                            <div class="polaroid polaroid-1">
+                                <div class="img-slot" data-image="polaroid1">
+                                    <img alt="">
+                                    <span class="img-empty">사진</span>
+                                    <div class="admin-tools"><button type="button" data-action="image">이미지</button></div>
+                                </div>
+                            </div>
+                            <div class="polaroid polaroid-2">
+                                <div class="img-slot" data-image="polaroid2">
+                                    <img alt="">
+                                    <span class="img-empty">사진</span>
+                                    <div class="admin-tools"><button type="button" data-action="image">이미지</button></div>
+                                </div>
+                            </div>
+                            <div class="polaroid polaroid-3">
+                                <div class="img-slot" data-image="polaroid3">
+                                    <img alt="">
+                                    <span class="img-empty">사진</span>
+                                    <div class="admin-tools"><button type="button" data-action="image">이미지</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!--스토리-->
+                <section class="char-view story" data-view="story" hidden>
+                    <div class="story-list" id="storyList"></div>
+                    <p class="story-empty" id="storyEmpty" hidden>아직 작성된 스토리가 없습니다.</p>
+                    <button type="button" class="chip admin-only story-add" id="storyAdd">+ 챕터 추가</button>
+                </section>
+
+                <!--메모-->
+                <section class="char-view memo-view" data-view="memo" hidden>
+                    <div class="memo-toolbar">
+                        <button type="button" class="chip admin-only" id="memoAdd">+ 메모 추가</button>
+                        <label class="memo-search">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path fill="none" stroke="#d9e5f7" stroke-linecap="round" stroke-width="2" d="m21 21l-4.486-4.494M19 10.5a8.5 8.5 0 1 1-17 0a8.5 8.5 0 0 1 17 0Z" />
+                            </svg>
+                            <input type="search" id="memoSearch" placeholder="검색" aria-label="메모 검색" autocomplete="off">
+                        </label>
+                    </div>
+                    <div class="memo-scroll">
+                        <div class="memo-list" id="memoList"></div>
+                        <p class="story-empty" id="memoEmpty" hidden>아직 작성된 메모가 없습니다.</p>
+                        <p class="story-empty" id="memoNoResult" hidden>검색 결과가 없습니다.</p>
+                    </div>
+                </section>
+
+                <!--엔트리-->
+                <section class="char-view entry-view" data-view="entry" hidden>
+                    <div class="entry-stage">
+                        <button type="button" class="entry-arrow prev" data-go="prev" aria-label="이전 카드">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path fill="#bbd5ff" d="M13.83 19a1 1 0 0 1-.78-.37l-4.83-6a1 1 0 0 1 0-1.27l5-6a1 1 0 0 1 1.54 1.28L10.29 12l4.32 5.36a1 1 0 0 1-.78 1.64" />
+                            </svg>
+                        </button>
+                        <div class="entry-track"></div>
+                        <button type="button" class="entry-arrow next" data-go="next" aria-label="다음 카드">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path fill="#bbd5ff" d="M10 19a1 1 0 0 1-.64-.23a1 1 0 0 1-.13-1.41L13.71 12L9.39 6.63a1 1 0 0 1 .15-1.41a1 1 0 0 1 1.46.15l4.83 6a1 1 0 0 1 0 1.27l-5 6A1 1 0 0 1 10 19" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="entry-dots">
+                        <span class="entry-ball" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path fill="#7fa3e0" d="M14.5 12a2.5 2.5 0 0 1-5 0a2.5 2.5 0 0 1 5 0m7.5 0c0 5.52-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2s10 4.48 10 10m-2 0h-4c0-2.21-1.79-4-4-4s-4 1.79-4 4H4c0 4.41 3.59 8 8 8s8-3.59 8-8" />
+                            </svg>
+                        </span>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        <!--뮤직플레이어-->
+        <div class="player" id="player">
+            <button type="button" class="pl-btn" data-pl="prev" aria-label="이전 곡">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h1.6v10H3zM13 3.2v9.6L5.8 8z"/></svg>
+            </button>
+            <button type="button" class="pl-btn pl-play" data-pl="toggle" aria-label="재생">
+                <svg class="ic-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.5v11L13 8z"/></svg>
+                <svg class="ic-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>
+            </button>
+            <button type="button" class="pl-btn" data-pl="next" aria-label="다음 곡">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11.4 3H13v10h-1.6zM3 3.2v9.6L10.2 8z"/></svg>
+            </button>
+            <div class="pl-title"><span id="plTitle">재생할 음악이 없습니다</span></div>
+            <div class="pl-progress" id="plProgress"><div class="pl-bar" id="plBar"></div></div>
+            <span class="pl-time" id="plTime">0:00</span>
+            <button type="button" class="pl-btn" data-pl="list" aria-label="플레이리스트">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h9V5H2zM2 7.25h9v1.5H2zM2 11h6v1.5H2zM12 9.2V2.5h1.5v1.6h1.5v1.5h-1.5v6.1a1.9 1.9 0 1 1-1.5-1.86z"/></svg>
+            </button>
+
+            <div class="pl-panel" id="plPanel" hidden>
+                <div class="pl-panel-head">
+                    <strong>플레이리스트</strong>
+                    <button type="button" class="chip admin-only" id="plUpload">+ 음악 추가</button>
+                </div>
+                <ol class="pl-list" id="plList"></ol>
+            </div>
+            <audio id="plAudio" preload="metadata"></audio>
+        </div>
+
+    </main>
+
+    <script type="module" src="js/character.js"></script>
+
+</body>
+</html>

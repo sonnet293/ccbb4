@@ -1,0 +1,261 @@
+.site-header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 64px;
+    padding: 0 16px;
+}
+
+.gnb {
+    display: flex;
+    gap: clamp(24px, 3.4vw, 44px);
+}
+
+.gnb a {
+    position: relative;
+    color: #000;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: .06em;
+    transition: color .2s ease;
+}
+
+/* 밑줄 */
+.gnb a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -5px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .35s cubic-bezier(.22,.61,.36,1);
+}
+
+.gnb a:hover,
+.gnb a:focus-visible,
+.gnb-item:hover > a,
+.gnb-item:focus-within > a,
+.gnb-item.is-open > a { color: #D9E5F7; }
+
+.gnb a:hover::after,
+.gnb a:focus-visible::after,
+.gnb-item:hover > a::after,
+.gnb-item:focus-within > a::after,
+.gnb-item.is-open > a::after { transform: scaleX(1); }
+
+.gnb a[aria-current="page"] { font-weight: 700; }
+
+/* 드롭다운 */
+.gnb-item {
+    position: relative;
+}
+
+.gnb-sub {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-width: 120px;
+    margin-top: 14px;
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, .92);
+    backdrop-filter: blur(6px);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -4px);
+    transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+
+.gnb-sub::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 15px;
+}
+
+.gnb-item:hover .gnb-sub,
+.gnb-item:focus-within .gnb-sub,
+.gnb-item.is-open .gnb-sub {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+.gnb-sub a {
+    font-size: 12px;
+    letter-spacing: .1em;
+    white-space: nowrap;
+}
+
+.gnb-sub a::after { bottom: -3px; }
+
+.login-btn {
+    position: absolute;
+    right: max(var(--gutter), calc((100% - var(--board-w)) / 2));
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: none;
+    color: var(--muted);
+    transition: border-color .2s, color .2s;
+}
+
+.login-btn:hover { color: var(--sky-ink); border-color: var(--line); }
+body.is-admin .login-btn { color: var(--sky-ink); border-color: var(--line); }
+
+/* 사이트 로고 */
+.site-logo {
+    position: absolute;
+    left: max(var(--gutter), calc((100% - var(--board-w)) / 2));
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    line-height: 0;
+    transition: opacity .2s ease;
+}
+
+.site-logo img {
+    display: block;
+    width: auto;
+    height: 32px;
+}
+
+.site-logo:hover { opacity: .7; }
+
+.nav-panel { display: contents; }
+
+.menu-toggle {
+    display: none;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+.menu-toggle span {
+    position: absolute;
+    left: 10px;
+    width: 20px;
+    height: 1.5px;
+    border-radius: 1px;
+    background: var(--ink);
+    transition: transform .3s var(--ease-out, ease), opacity .2s ease;
+}
+
+.menu-toggle span:nth-child(1) { top: 13px; }
+.menu-toggle span:nth-child(2) { top: 19px; }
+.menu-toggle span:nth-child(3) { top: 25px; }
+
+.site-header.is-open .menu-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.site-header.is-open .menu-toggle span:nth-child(2) { opacity: 0; }
+.site-header.is-open .menu-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.site-header { animation: fade-down var(--enter-dur) var(--ease-out) backwards; }
+
+/* 모바일 (~760px): 햄버거 메뉴 */
+@media (max-width: 760px) {
+    .site-header {
+        z-index: 50;
+        justify-content: flex-start;
+        height: 56px;
+        padding: 0 8px;
+    }
+
+    .menu-toggle { display: block; margin-left: auto; }
+
+    .site-logo {
+        position: static;
+        transform: none;
+        margin-left: 8px;
+    }
+
+    .site-logo img { height: 26px; }
+
+    .nav-panel {
+        position: absolute;
+        top: 100%;
+        left: var(--gutter);
+        right: var(--gutter);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, .95);
+        backdrop-filter: blur(8px);
+        box-shadow: var(--shadow);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px);
+        transition: opacity .2s ease, transform .2s ease, visibility .2s;
+    }
+
+    .site-header.is-open .nav-panel {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
+
+    .gnb { flex-direction: column; gap: 0; }
+
+    .gnb > a,
+    .gnb-item > a {
+        display: block;
+        padding: 12px 4px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .gnb a::after { content: none; }
+
+    /* 하위 메뉴는 펼친 상태로 들여쓰기 */
+    .gnb-sub,
+    .gnb-item:hover .gnb-sub,
+    .gnb-item:focus-within .gnb-sub {
+        position: static;
+        align-items: stretch;
+        gap: 0;
+        min-width: 0;
+        margin: 0;
+        padding: 4px 0 4px 16px;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        border-radius: 0;
+        background: none;
+        backdrop-filter: none;
+        box-shadow: none;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
+
+    .gnb-sub::before { content: none; }
+    .gnb-sub a { display: block; padding: 8px 4px; color: var(--muted); }
+
+    .login-btn {
+        position: static;
+        transform: none;
+        align-self: stretch;
+        padding: 10px;
+        border-color: var(--line);
+        color: var(--sky-ink);
+    }
+}

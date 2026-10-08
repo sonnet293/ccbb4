@@ -1,0 +1,152 @@
+/* sticky: 평소엔 제자리, 화면이 낮아 제자리가 화면 밖이면 화면 아래쪽에 붙어서 항상 보임 */
+.player {
+    position: sticky;
+    bottom: 16px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: min(550px, 100%);
+    height: 38px;
+    margin-top: 30px; /* 메인 영역과 간격 (gap 18px 포함 총 40px) */
+    padding: 0 8px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    backdrop-filter: blur(6px);
+    box-shadow: var(--shadow);
+}
+
+.pl-btn {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--sky-ink);
+}
+
+.pl-btn svg { width: 13px; height: 13px; fill: currentColor; }
+.pl-btn:hover { background: var(--sky); }
+.pl-play { background: var(--sky); }
+.pl-play:hover { background: var(--sky-deep); color: #fff; }
+.pl-play .ic-pause,
+.player.playing .pl-play .ic-play { display: none; }
+.player.playing .pl-play .ic-pause { display: block; }
+
+.pl-title {
+    flex: 1;
+    min-width: 0;
+    padding: 0 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 12px;
+}
+
+.pl-progress {
+    flex: none;
+    width: 130px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--sky);
+    cursor: pointer;
+    position: relative;
+}
+
+.pl-progress::before {
+    content: "";
+    position: absolute;
+    inset: -8px 0;
+}
+
+.pl-bar {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--sky-ink);
+}
+
+.pl-time {
+    flex: none;
+    width: 34px;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    text-align: right;
+}
+
+.pl-panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 8px);
+    width: 300px;
+    max-height: 320px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel-solid);
+    box-shadow: var(--shadow);
+    z-index: 10;
+}
+
+.pl-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+}
+
+.pl-list {
+    margin: 0;
+    padding: 4px;
+    overflow-y: auto;
+    list-style: none;
+    counter-reset: track;
+}
+
+.pl-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    counter-increment: track;
+}
+
+.pl-list li::before {
+    content: counter(track);
+    width: 16px;
+    color: var(--muted);
+    font-size: 11px;
+    text-align: right;
+}
+
+.pl-list li:hover { background: rgba(217, 229, 247, .5); }
+.pl-list li.current { background: var(--sky); font-weight: 600; }
+.pl-list li span { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pl-list .empty { justify-content: center; color: var(--muted); cursor: default; }
+.pl-list .empty::before { display: none; }
+
+.player { animation: fade-up var(--enter-dur) var(--ease-out) 1s backwards; }
+.pl-panel:not([hidden]) { animation: fade-up .25s var(--ease-out); }
+
+@media (max-width: 760px) {
+    .player { margin-top: 6px; }
+    .pl-progress { width: 70px; }
+    .pl-panel { width: min(300px, calc(100vw - 32px)); }
+}
+
+@media (max-width: 560px) {
+    .player { gap: 4px; }
+    .pl-progress { width: 50px; }
+}
