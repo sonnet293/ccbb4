@@ -1,4 +1,6 @@
 /* 세계관 메인 */
+@import url('https://fonts.googleapis.com/css2?family=Luxurious+Script&family=Suez+One&display=swap');
+
 .uni {
     display: flex;
     flex-direction: column;
@@ -46,9 +48,10 @@
 .uni-hero-copy h2 {
     margin: 0 0 6px;
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 400;
     line-height: 1;
     letter-spacing: -0.04em;
+    font-family: "Suez One", serif;
 }
 
 .uni-lead {
