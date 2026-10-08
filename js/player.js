@@ -160,13 +160,82 @@ player.addEventListener("click", (e) => {
   if (action === "next") playAt(currentIndex() + 1);
   if (action === "list") {
     panel.hidden = !panel.hidden;
+    volWrap.classList.remove("is-open");
     if (!panel.hidden) renderList();
   }
 });
 
 document.addEventListener("click", (e) => {
   // 목록을 다시 그리면 클릭한 요소가 DOM에서 빠지므로 composedPath로 판단
-  if (!panel.hidden && !e.composedPath().includes(player)) panel.hidden = true;
+  const path = e.composedPath();
+  if (!panel.hidden && !path.includes(player)) panel.hidden = true;
+  if (!path.includes(volWrap)) volWrap.classList.remove("is-open");
+});
+
+// ----- 볼륨 -----
+// 마우스: 스피커에 올리면 슬라이더 표시, 클릭하면 음소거
+// 터치: 스피커를 누르면 슬라이더 열기/닫기
+// iOS는 페이지에서 볼륨을 바꿀 수 없으므로(기기 버튼만 가능) 음소거만
+const VOLUME_KEY = "ccbb-volume";
+const volWrap = document.getElementById("plVol");
+const volBtn = volWrap.querySelector('[data-pl="volume"]');
+const volRange = document.getElementById("plVolume");
+const canHover = matchMedia("(hover: hover)");
+const volumeWorks = (() => {
+  const test = new Audio();
+  test.volume = 0.5;
+  return test.volume === 0.5;
+})();
+volWrap.classList.toggle("no-slider", !volumeWorks);
+
+function renderVolume() {
+  const silent = audio.muted || audio.volume === 0;
+  const level = silent ? 0 : Math.round(audio.volume * 100);
+  volRange.value = level;
+  volRange.style.setProperty("--p", `${level}%`);
+  volWrap.dataset.level = silent ? "mute" : level < 50 ? "low" : "high";
+  volBtn.setAttribute("aria-label", silent ? "음소거 해제" : "음소거");
+}
+
+function setVolume(level) {
+  audio.volume = level / 100;
+  audio.muted = level === 0;
+}
+
+function toggleMute() {
+  if (audio.muted || audio.volume === 0) {
+    audio.muted = false;
+    if (audio.volume === 0) audio.volume = 0.5; // 0까지 내렸다가 해제하면 절반으로
+  } else {
+    audio.muted = true;
+  }
+}
+
+try {
+  const saved = JSON.parse(localStorage.getItem(VOLUME_KEY));
+  if (saved) {
+    if (volumeWorks && Number.isFinite(saved.volume)) audio.volume = Math.min(1, Math.max(0, saved.volume));
+    audio.muted = !!saved.muted;
+  } else if (volumeWorks) {
+    audio.volume = 0.7;
+  }
+} catch {}
+renderVolume();
+
+volBtn.addEventListener("click", () => {
+  if (volumeWorks && !canHover.matches) {
+    volWrap.classList.toggle("is-open");
+    panel.hidden = true;
+  } else {
+    toggleMute();
+  }
+});
+volRange.addEventListener("input", () => setVolume(Number(volRange.value)));
+audio.addEventListener("volumechange", () => {
+  renderVolume();
+  try {
+    localStorage.setItem(VOLUME_KEY, JSON.stringify({ volume: audio.volume, muted: audio.muted }));
+  } catch {}
 });
 
 document.getElementById("plUpload").addEventListener("click", uploadTracks);

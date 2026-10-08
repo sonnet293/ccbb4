@@ -63,6 +63,19 @@
             <div class="pl-title"><span id="plTitle">재생할 음악이 없습니다</span></div>
             <div class="pl-progress" id="plProgress"><div class="pl-bar" id="plBar"></div></div>
             <span class="pl-time" id="plTime">0:00</span>
+            <div class="pl-vol" id="plVol">
+                <button type="button" class="pl-btn" data-pl="volume" aria-label="음소거">
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M1.5 5.75h2.6L7.5 2.8v10.4L4.1 10.25H1.5z"/>
+                        <path class="vol-w1" d="M10 5.6a3.4 3.4 0 0 1 0 4.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path class="vol-w2" d="M12.1 3.5a6.4 6.4 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path class="vol-x" d="M10.5 6l4 4m0-4l-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <div class="pl-vol-pop">
+                    <input type="range" id="plVolume" min="0" max="100" step="1" value="70" aria-label="볼륨">
+                </div>
+            </div>
             <button type="button" class="pl-btn" data-pl="list" aria-label="플레이리스트">
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h9V5H2zM2 7.25h9v1.5H2zM2 11h6v1.5H2zM12 9.2V2.5h1.5v1.6h1.5v1.5h-1.5v6.1a1.9 1.9 0 1 1-1.5-1.86z"/></svg>
             </button>

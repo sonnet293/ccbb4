@@ -5,10 +5,13 @@ import { showStory } from "./story.js";
 import { showMemo } from "./memo.js";
 import { showEntry } from "./entry.js";
 
-const IDS = ["1", "2", "3", "4"];
 const TABS = ["profile", "story", "memo", "entry"];
 
 const root = document.getElementById("character");
+// data-ids가 있으면 그 번호만, 없으면(AU·TRPG처럼 카드를 추가하는 페이지) 양의 정수 아무거나
+const IDS = root.dataset.ids?.split(",");
+const isValid = (id) => (IDS ? IDS.includes(id) : /^[1-9]\d*$/.test(id));
+const listPage = root.querySelector(".char-back").getAttribute("href");
 const tabLinks = [...root.querySelectorAll("[data-tab]")];
 const views = [...root.querySelectorAll("[data-view]")];
 const profile = root.querySelector('[data-view="profile"]');
@@ -25,7 +28,7 @@ function update() {
 
 function route() {
   const [id, rawTab] = location.hash.slice(1).split("/");
-  if (!IDS.includes(id)) return location.replace("original.html");
+  if (!isValid(id)) return location.replace(listPage);
   const tab = TABS.includes(rawTab) ? rawTab : "profile";
 
   for (const link of tabLinks) {

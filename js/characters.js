@@ -1,5 +1,6 @@
 // js/characters.js
 // 캐릭터 데이터
+// 저장 위치: <body data-collection="au"> → au 컬렉션 (없으면 characters)
 // 화면 요소 규칙:
 // [data-field="name"] - 텍스트 필드
 // [data-image="main"] - 이미지 자리
@@ -18,13 +19,15 @@ import { onAdminChange } from "./auth.js";
 import { uploadFile, removeFile } from "./supabase.js";
 import { errorMessage, pickFiles, toast } from "./utils.js";
 
-const charRef = (id) => doc(db, "characters", id);
+export const COL = document.body.dataset.collection || "characters";
+
+const charRef = (id) => doc(db, COL, id);
 
 export function watchCharacter(id, callback) {
   return onSnapshot(
     charRef(id),
     (snap) => callback(snap.data() || {}),
-    (err) => console.error(`characters/${id} 불러오기 실패:`, err)
+    (err) => console.error(`${COL}/${id} 불러오기 실패:`, err)
   );
 }
 
@@ -42,14 +45,14 @@ export const saveField = (id, field, value) => saveTo(charRef(id), { [field]: va
 export const savePatch = (id, patch) => saveTo(charRef(id), patch);
 
 // ----- 캐릭터별 목록 (스토리 chapters, 메모 memos …) -----
-const listCol = (id, col) => collection(db, "characters", id, col);
+export const listCol = (id, col) => collection(db, COL, id, col);
 
 export function watchList(id, col, callback) {
   return onSnapshot(
     query(listCol(id, col), orderBy("order")),
     (snap) => callback(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
     (err) => {
-      console.error(`characters/${id}/${col} 불러오기 실패:`, err);
+      console.error(`${COL}/${id}/${col} 불러오기 실패:`, err);
       callback([]);
     }
   );
@@ -84,7 +87,7 @@ export async function replaceImage(id, toPatch, oldPath) {
   if (!file) return;
   try {
     toast("업로드 중…", 60000);
-    const { url, path } = await uploadFile(file, "characters");
+    const { url, path } = await uploadFile(file, COL);
     await setDoc(charRef(id), toPatch({ url, path }), { merge: true });
     if (oldPath) removeFile(oldPath);
     toast("이미지가 변경되었습니다.");

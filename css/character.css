@@ -74,6 +74,70 @@
     color: #444;
 }
 
+/* AU · TRPG 목록: 줄 제목 옆 카드 추가(+) 버튼, 카드 삭제(×) */
+.cards:has(.cards-head) { width: min(100%, 936px); }
+.cards + .cards { margin-top: 48px; }
+
+.cards-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.cards-head .cards-title { margin: 0; }
+
+.card-add {
+    margin-left: auto; /* 줄 오른쪽 끝 */
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 28px;
+    filter: drop-shadow(0 1px 2px rgba(80, 110, 160, .35));
+    transition: transform .25s var(--ease-out), opacity .2s;
+}
+
+.card-add:hover:not(:disabled) { transform: rotate(90deg) scale(1.08); }
+.card-add:disabled { opacity: .4; cursor: default; }
+
+.card-list[data-ready]:empty::before {
+    content: "아직 카드가 없습니다.";
+    grid-column: 1 / -1;
+    padding: 40px 0;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.card-del {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .9);
+    font-size: 18px;
+    opacity: 0;
+    transition: opacity .2s, color .2s;
+}
+
+.card:hover .card-del,
+.card-del:focus-visible { opacity: 1; }
+
+@media (hover: none) {
+    .card-del { opacity: 1; }
+}
+
 /* ===== 캐릭터 세부 페이지 ===== */
 .page-detail { --page-top: 30px; }
 
@@ -245,6 +309,106 @@
 .polaroid-2 { top: calc(150 * var(--u)); left: calc(38 * var(--u)); transform: rotate(12.88deg); z-index: 2; }
 .polaroid-3 { top: calc(300 * var(--u)); left: calc(14 * var(--u)); transform: rotate(-1.64deg); z-index: 3; }
 .polaroid:hover { z-index: 4; }
+
+/* AU · TRPG 프로필: 메인 이미지 자리를 세로 3칸으로 나눔
+   한 칸 = CD(왼쪽 40%) + 노래 제목 · 가사 */
+.song {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #fff;
+}
+
+.song-row {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+}
+
+.song-row + .song-row { border-top: 1px solid var(--line); }
+
+.song-cd {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40%;
+    border-right: 1px solid var(--line);
+    background: #EEF3FE;
+}
+
+/* 단색 CD + 가운데 구멍 (이미지를 넣으면 이미지 위에 구멍만 겹쳐 보임) */
+.cd-disc {
+    width: 32cqw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #BBD5FF;
+    box-shadow: 0 3px 10px rgba(95, 127, 178, .25);
+}
+
+.cd-disc::after {
+    content: "";
+    position: absolute;
+    inset: 39%;
+    z-index: 1;
+    border-radius: 50%;
+    background: #EEF3FE;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, .6);
+    pointer-events: none;
+}
+
+/* 이미지만 회전 (버튼은 고정) */
+.cd-disc img { animation: cd-spin 8s linear infinite paused; }
+
+.cd-disc .admin-tools {
+    right: 0;
+    bottom: 10%;
+    left: 0;
+    justify-content: center;
+}
+
+.cd-disc .admin-tools button { padding: 2px 8px; font-size: 11px; }
+
+/* 음악 플레이어가 재생 중일 때만 회전 */
+.page:has(.player.playing) .cd-disc img { animation-play-state: running; }
+
+@keyframes cd-spin {
+    to { rotate: 360deg; }
+}
+
+.song-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 4.5cqw 4.5cqw 3.5cqw;
+    word-break: keep-all;
+}
+
+.song-title {
+    flex: none;
+    margin: 0;
+    padding-bottom: 2cqw;
+    border-bottom: 1px solid #d9e5f7;
+    font-size: max(12px, 4.2cqw);
+    font-weight: 700;
+    line-height: 1.35;
+    color: #112F65;
+}
+
+/* 가사: 오른쪽 끝에 붙여서 정렬 */
+.song-lyrics {
+    flex: 1;
+    min-height: 0;
+    margin-top: 2.5cqw;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    text-align: right;
+    font-size: max(11px, 3.4cqw);
+    line-height: 1.7;
+    color: #333;
+    scrollbar-width: thin;
+}
 
 /* 스토리: 프로필과 같은 높이 안에서 세로 스크롤 (플레이어 위치 유지) */
 .story {
@@ -740,6 +904,9 @@
 /* 카드 2열 */
 @media (max-width: 760px) {
     .card-list { grid-template-columns: repeat(2, minmax(0, 216px)); gap: 16px; }
+    .cards:has(.cards-head) { width: min(100%, 448px); }
+    .cards + .cards { margin-top: 36px; }
+    .cards-head { margin-bottom: 12px; }
 
     /* 캐릭터 세부: 메뉴는 위에 가로로, 프로필은 세로로 쌓기 */
     /* 카드(319px) + 양옆 화살표 자리가 안 들어가는 좁은 폰에선 같은 비율로 축소 */
@@ -793,5 +960,10 @@
 
 @media (max-width: 560px) {
     .card-list { gap: 12px; }
+    .cards:has(.cards-head) { width: min(100%, 444px); }
     .card-info { padding: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cd-disc img { animation: none; }
 }
