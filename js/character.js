@@ -3,16 +3,19 @@ import "./sub.js";
 import { bindFields, bindImages, render, saveField, watchCharacter } from "./characters.js";
 import { showStory } from "./story.js";
 import { showMemo } from "./memo.js";
-import { showEntry } from "./entry.js";
-
-const TABS = ["profile", "story", "memo", "entry"];
 
 const root = document.getElementById("character");
+const tabLinks = [...root.querySelectorAll("[data-tab]")];
+const TABS = tabLinks.map((link) => link.dataset.tab); // 페이지마다 탭 구성이 다름 (AU·TRPG는 엔트리 없음)
+
+// 엔트리 탭이 있는 페이지에서만 불러옴
+let showEntry = () => {};
+if (TABS.includes("entry")) ({ showEntry } = await import("./entry.js"));
+
 // data-ids가 있으면 그 번호만, 없으면(AU·TRPG처럼 카드를 추가하는 페이지) 양의 정수 아무거나
 const IDS = root.dataset.ids?.split(",");
 const isValid = (id) => (IDS ? IDS.includes(id) : /^[1-9]\d*$/.test(id));
 const listPage = root.querySelector(".char-back").getAttribute("href");
-const tabLinks = [...root.querySelectorAll("[data-tab]")];
 const views = [...root.querySelectorAll("[data-view]")];
 const profile = root.querySelector('[data-view="profile"]');
 
