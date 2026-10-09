@@ -100,12 +100,15 @@ function renderAll(data) {
   if (KIND === "gallery") renderTagBar();
   updateFade();
 
-  if (pendingScroll && tiles.has(pendingScroll)) reveal(pendingScroll);
+  reveal();
 }
 
-function reveal(id) {
+// 필터 중엔 태그가 불러와져 타일이 보일 때까지 기다림
+function reveal() {
+  const tile = tiles.get(pendingScroll)?.tile;
+  if (!tile || tile.hidden) return;
   pendingScroll = null;
-  tiles.get(id).tile.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  tile.scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
 
 // ----- 갤러리: 해시태그 필터 -----
@@ -140,6 +143,7 @@ function renderTagBar() {
   if (!dragging) tagBar.replaceChildren(tagChip(null, "전체"), ...all.map((t) => tagChip(t, "#" + t)));
   for (const e of tiles.values()) e.tile.hidden = !!activeTag && !parseTags(e.data.tags).includes(activeTag);
   updateFade();
+  reveal();
 }
 
 // 관리자: 태그 버튼을 끌어서 순서 바꾸기 (마우스 · 터치 모두 pointer 이벤트로 처리)
@@ -200,12 +204,14 @@ listEl.addEventListener("scroll", updateFade, { passive: true });
 new ResizeObserver(updateFade).observe(listEl);
 
 // ----- 추가 · 삭제 -----
-async function addTile() {
+// tag: 필터로 보고 있던 태그 → 새 이미지에 미리 붙여서 필터 안에 바로 보이게
+async function addTile(tag) {
   return runTransaction(db, async (tx) => {
     const data = withDefaults((await tx.get(listRef)).data());
     const used = KINDS.flatMap((k) => data[k]).map(Number);
     const next = Math.max(data.next || 0, ...used, 0) + 1;
     tx.set(listRef, { [KIND]: [...data[KIND], String(next)], next }, { merge: true });
+    if (tag) tx.set(doc(db, COL, String(next)), { tags: "#" + tag }, { merge: true });
     return String(next);
   });
 }
@@ -230,10 +236,9 @@ const addBtn = document.querySelector("[data-add]");
 addBtn.addEventListener("click", async () => {
   addBtn.disabled = true;
   try {
-    const id = await addTile();
-    if (activeTag) setTag(activeTag); // 필터 해제 → 새 타일이 보이게
-    if (tiles.has(id)) reveal(id);
-    else pendingScroll = id;
+    const id = await addTile(KIND === "gallery" ? activeTag : null);
+    pendingScroll = id;
+    reveal();
     toast(`${LABEL}이(가) 추가되었습니다.`);
   } catch (err) {
     toast("추가 실패: " + errorMessage(err), 4000);
