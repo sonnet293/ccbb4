@@ -19,6 +19,10 @@ const listPage = root.querySelector(".char-back").getAttribute("href");
 const views = [...root.querySelectorAll("[data-view]")];
 const profile = root.querySelector('[data-view="profile"]');
 
+// 파비콘 태그가 있는 페이지(오리지널)에서만 캐릭터별로 바꿈
+const favicon = document.getElementById("favicon");
+const FAVICONS = { 1: "시릴파비", 2: "녹샤파비", 3: "레미파비", 4: "비제파비" };
+
 let currentId = null;
 let data = {};
 let unsubscribe = null;
@@ -27,6 +31,7 @@ function update() {
   render(profile, data);
   showEntry(currentId, data);
   document.title = `${data.name || "#" + currentId} · 시시비비`;
+  if (favicon && FAVICONS[currentId]) favicon.href = `img/${FAVICONS[currentId]}.png`;
 }
 
 function route() {
