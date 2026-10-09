@@ -66,6 +66,14 @@ function createBook(view, labels) {
   return book;
 }
 
+// 메인 소개 글 (universe 컬렉션의 "home" 문서) — 저장된 값이 없으면 HTML에 적힌 글을 기본값으로 사용
+const heroCopy = document.querySelector(".uni-hero-copy");
+const heroDefaults = Object.fromEntries(
+  [...heroCopy.querySelectorAll("[data-field]")].map((el) => [el.dataset.field, el.textContent.trim()])
+);
+bindFields(heroCopy, (field, value) => saveField("home", field, value));
+watchCharacter("home", (d) => render(heroCopy, { ...heroDefaults, ...d }));
+
 function route() {
   const hash = location.hash.slice(1);
   const current = VIEWS.includes(hash) ? hash : "home";
