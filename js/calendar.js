@@ -130,7 +130,7 @@ async function removeEvent(ev) {
 
 eventForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const title = eventForm.title.value.trim();
+  const title = eventForm.elements.title.value.trim();
   if (!title || !selectedDate) return;
   try {
     await addDoc(collection(db, "events"), { date: selectedDate, title, createdAt: serverTimestamp() });
