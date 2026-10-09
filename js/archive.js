@@ -1,9 +1,4 @@
 // js/archive.js — 아카이브 (archive.html: 갤러리, trpg.html: TRPG)
-// <body data-kind="gallery|trpg"> 로 어느 목록인지 구분
-// 타일 번호와 순서는 archive/_list 문서에 저장 { gallery: ["1", …], trpg: ["7", …], next: 10 }
-// 타일 내용은 archive/{번호} 문서에 저장
-//   갤러리: { memo, images: { image } }
-//   TRPG:   { title, writer, summary, images: { image } }
 import { db } from "./firebase.js";
 import { deleteDoc, doc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { COL, bindFields, bindImages, render, saveField, watchCharacter } from "./characters.js";
@@ -67,7 +62,7 @@ function mountTile(id) {
     entry.data = d;
     render(tile, d);
     if (KIND === "trpg") {
-      // 타일 위 제목은 보여주기만 (수정은 상세 창에서)
+  
       tile.querySelector(".arc-hover-title").textContent = d.title || "시나리오 제목";
       tile.querySelector(".tile-open").setAttribute("aria-label", d.title || `시나리오 #${id}`);
     }
@@ -85,7 +80,7 @@ function renderAll(data) {
     tiles.delete(id);
   }
 
-  listEl.dataset.ready = ""; // 불러온 뒤에만 '타일 없음' 표시
+  listEl.dataset.ready = ""; 
   ids.forEach((id, i) => {
     let entry = tiles.get(id);
     if (!entry) {
@@ -113,7 +108,6 @@ listEl.addEventListener("scroll", updateFade, { passive: true });
 new ResizeObserver(updateFade).observe(listEl);
 
 // ----- 추가 · 삭제 -----
-// 번호는 지운 타일과 겹치지 않도록 계속 증가 (next)
 async function addTile() {
   return runTransaction(db, async (tx) => {
     const data = withDefaults((await tx.get(listRef)).data());
