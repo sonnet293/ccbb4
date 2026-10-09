@@ -102,3 +102,49 @@ button.ghost {
 .login-form { gap: 10px; }
 .form-error { min-height: 1em; margin: 0; font-size: 12px; color: var(--sun); }
 .form-actions { display: flex; justify-content: flex-end; gap: 8px; }
+/* 이미지 자르기 (js/crop.js) */
+.crop-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 8px;
+    background: #EEF2F8;
+}
+
+.crop-stage {
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+}
+
+.crop-img {
+    display: block;
+    max-width: 100%;
+    max-height: min(56vh, 480px);
+    max-height: min(56dvh, 480px);
+}
+
+.crop-box {
+    position: absolute;
+    border: 1px solid #fff;
+    box-shadow: 0 0 0 9999px rgba(30, 40, 60, .5);
+    cursor: move;
+}
+
+.crop-handle {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--sky-deep);
+    border-radius: 50%;
+    background: #fff;
+}
+
+.crop-handle.nw { left: -7px; top: -7px; cursor: nwse-resize; }
+.crop-handle.ne { right: -7px; top: -7px; cursor: nesw-resize; }
+.crop-handle.sw { left: -7px; bottom: -7px; cursor: nesw-resize; }
+.crop-handle.se { right: -7px; bottom: -7px; cursor: nwse-resize; }
+
+.crop-ratios { display: flex; gap: 6px; }
+.crop-ratios .chip.active { background: var(--sky); border-color: var(--sky-deep); }

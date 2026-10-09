@@ -72,7 +72,12 @@ function buildCard(i) {
 }
 
 function changePhoto(i) {
-  replaceImage(charId, (image) => ({ entry: { [i]: { images: { photo: image } } } }), entries[i]?.images?.photo?.path);
+  replaceImage(
+    charId,
+    (image) => ({ entry: { [i]: { images: { photo: image } } } }),
+    entries[i]?.images?.photo?.path,
+    cards[i].querySelector(".entry-photo")
+  );
 }
 
 function renderTypes(i) {

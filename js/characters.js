@@ -17,7 +17,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { onAdminChange } from "./auth.js";
 import { uploadFile, removeFile } from "./supabase.js";
-import { errorMessage, pickFiles, toast } from "./utils.js";
+import { aspectOf, pickImage } from "./crop.js";
+import { errorMessage, toast } from "./utils.js";
 
 export const COL = document.body.dataset.collection || "characters";
 
@@ -82,10 +83,11 @@ export async function deleteItem(id, col, itemId) {
 
 // ----- 이미지 -----
 // toPatch({ url, path }) → 캐릭터 문서에 합칠 내용 (엔트리 카드 등 images 밖에 저장할 때 사용)
-export async function replaceImage(id, toPatch, oldPath) {
-  const [file] = await pickFiles("image/*");
-  if (!file) return;
+// slot: 이미지 칸 요소 (자르기 비율 계산용)
+export async function replaceImage(id, toPatch, oldPath, slot) {
   try {
+    const file = await pickImage(aspectOf(slot));
+    if (!file) return;
     toast("업로드 중…", 60000);
     const { url, path } = await uploadFile(file, COL);
     await setDoc(charRef(id), toPatch({ url, path }), { merge: true });
@@ -97,7 +99,7 @@ export async function replaceImage(id, toPatch, oldPath) {
   }
 }
 
-const changeImage = (id, key, oldPath) => replaceImage(id, (image) => ({ images: { [key]: image } }), oldPath);
+const changeImage = (id, key, oldPath, slot) => replaceImage(id, (image) => ({ images: { [key]: image } }), oldPath, slot);
 
 // ----- 화면 연결 -----
 let isAdmin = false;
@@ -146,7 +148,7 @@ export function bindImages(root, getId, getData) {
     slot.querySelector('[data-action="image"]')?.addEventListener("click", (e) => {
       e.preventDefault();
       const key = slot.dataset.image;
-      changeImage(getId(), key, getData().images?.[key]?.path);
+      changeImage(getId(), key, getData().images?.[key]?.path, slot);
     });
   }
 }

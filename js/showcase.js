@@ -3,7 +3,8 @@
 import { db } from "./firebase.js";
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { uploadFile, removeFile } from "./supabase.js";
-import { errorMessage, pickFiles, safeUrl, toast } from "./utils.js";
+import { aspectOf, pickImage } from "./crop.js";
+import { errorMessage, safeUrl, toast } from "./utils.js";
 
 const configRef = doc(db, "site", "config");
 let config = {};
@@ -39,10 +40,10 @@ onSnapshot(
   (err) => console.error("site/config 불러오기 실패:", err)
 );
 
-async function changeImage(key) {
-  const [file] = await pickFiles("image/*");
-  if (!file) return;
+async function changeImage(key, slot) {
   try {
+    const file = await pickImage(aspectOf(slot));
+    if (!file) return;
     toast("업로드 중…", 60000);
     const oldPath = config[key]?.path;
     const { url, path } = await uploadFile(file, key === "main" ? "main" : "banners");
@@ -70,6 +71,6 @@ async function changeLink(key) {
 
 for (const el of slots) {
   const key = el.dataset.slot;
-  el.querySelector('[data-action="image"]')?.addEventListener("click", () => changeImage(key));
+  el.querySelector('[data-action="image"]')?.addEventListener("click", () => changeImage(key, el));
   el.querySelector('[data-action="link"]')?.addEventListener("click", () => changeLink(key));
 }
