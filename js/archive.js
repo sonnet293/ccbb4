@@ -1,6 +1,6 @@
 // js/archive.js — 아카이브 (archive.html: 갤러리, trpg.html: TRPG)
 import { db } from "./firebase.js";
-import { deleteDoc, doc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { deleteDoc, doc, onSnapshot, runTransaction, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { COL, bindFields, bindImages, render, saveField, watchCharacter } from "./characters.js";
 import { removeFile } from "./supabase.js";
 import { bindDialog, errorMessage, h, toast } from "./utils.js";
@@ -80,6 +80,7 @@ function mountTile(id) {
 
 function renderAll(data) {
   const ids = data[KIND];
+  tagOrder = data.tagOrder || [];
   for (const [id, entry] of tiles) {
     if (ids.includes(id)) continue;
     entry.stop();
@@ -113,11 +114,18 @@ const parseTags = (text = "") => [...new Set(text.split(/[\s,#]+/).filter(Boolea
 const formatTags = (text) => parseTags(text).map((t) => "#" + t).join(" ");
 
 let activeTag = null; // 선택된 태그 (null이면 전체)
+let tagOrder = []; // 관리자가 정한 태그 순서 (_list 문서). 없는 태그는 뒤에 가나다순
+let dragging = false; // 태그를 끄는 중에는 버튼을 다시 그리지 않음
 const tagBar = h("div", { class: "arc-tagbar", role: "toolbar", "aria-label": "해시태그 필터", hidden: true });
 if (KIND === "gallery") document.querySelector(".cards-head").prepend(tagBar);
 
 const tagChip = (tag, label) =>
-  h("button", { type: "button", class: "chip", "aria-pressed": String(activeTag === tag), onclick: () => setTag(tag) }, label);
+  h("button", { type: "button", class: "chip", "data-tag": tag, "aria-pressed": String(activeTag === tag), onclick: () => setTag(tag) }, label);
+
+function sortTags(tags) {
+  const rank = (t) => (tagOrder.includes(t) ? tagOrder.indexOf(t) : Infinity);
+  return tags.sort((a, b) => rank(a) - rank(b) || a.localeCompare(b, "ko"));
+}
 
 function setTag(tag) {
   activeTag = activeTag === tag ? null : tag; // 같은 태그를 다시 누르면 해제
@@ -126,12 +134,61 @@ function setTag(tag) {
 }
 
 function renderTagBar() {
-  const all = [...new Set([...tiles.values()].flatMap((e) => parseTags(e.data.tags)))].sort((a, b) => a.localeCompare(b, "ko"));
+  const all = sortTags([...new Set([...tiles.values()].flatMap((e) => parseTags(e.data.tags)))]);
   if (activeTag && !all.includes(activeTag)) activeTag = null; // 선택한 태그가 사라지면 전체로
   tagBar.hidden = !all.length;
-  tagBar.replaceChildren(tagChip(null, "전체"), ...all.map((t) => tagChip(t, "#" + t)));
+  if (!dragging) tagBar.replaceChildren(tagChip(null, "전체"), ...all.map((t) => tagChip(t, "#" + t)));
   for (const e of tiles.values()) e.tile.hidden = !!activeTag && !parseTags(e.data.tags).includes(activeTag);
   updateFade();
+}
+
+// 관리자: 태그 버튼을 끌어서 순서 바꾸기 (마우스 · 터치 모두 pointer 이벤트로 처리)
+tagBar.addEventListener("pointerdown", (e) => {
+  const chip = e.target.closest("[data-tag]");
+  if (!chip || !document.body.classList.contains("is-admin") || e.button !== 0) return;
+  const start = { x: e.clientX, y: e.clientY };
+
+  const move = (ev) => {
+    if (!dragging) {
+      if (Math.hypot(ev.clientX - start.x, ev.clientY - start.y) < 6) return; // 살짝 흔들린 건 클릭으로
+      dragging = true;
+      chip.classList.add("dragging");
+    }
+    const over = document.elementFromPoint(ev.clientX, ev.clientY)?.closest("[data-tag]");
+    if (!over || over === chip || over.parentNode !== tagBar) return;
+    const r = over.getBoundingClientRect();
+    tagBar.insertBefore(chip, ev.clientX > r.left + r.width / 2 ? over.nextSibling : over);
+  };
+
+  const up = () => {
+    removeEventListener("pointermove", move);
+    removeEventListener("pointerup", up);
+    removeEventListener("pointercancel", up);
+    if (!dragging) return;
+    dragging = false;
+    chip.classList.remove("dragging");
+    // 놓을 때 생기는 클릭은 무시 (필터가 바뀌지 않게)
+    const eat = (ev) => ev.stopPropagation();
+    addEventListener("click", eat, { capture: true, once: true });
+    setTimeout(() => removeEventListener("click", eat, { capture: true }));
+    saveTagOrder([...tagBar.querySelectorAll("[data-tag]")].map((c) => c.dataset.tag));
+  };
+
+  addEventListener("pointermove", move);
+  addEventListener("pointerup", up);
+  addEventListener("pointercancel", up);
+});
+
+async function saveTagOrder(order) {
+  if (order.join() === sortTags([...order]).join()) return; // 그대로 놓음
+  tagOrder = order;
+  renderTagBar();
+  try {
+    await setDoc(listRef, { tagOrder: order }, { merge: true });
+    toast("태그 순서가 저장되었습니다.");
+  } catch (err) {
+    toast("저장 실패: " + errorMessage(err), 4000);
+  }
 }
 
 // ----- 하단 그라데이션: 스크롤이 끝나면 사라짐 -----

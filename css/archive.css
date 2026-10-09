@@ -156,6 +156,10 @@
 .arc-tagbar .chip { transition: background .2s, color .2s; }
 .arc-tagbar .chip[aria-pressed="true"] { background: var(--sky-ink); border-color: var(--sky-ink); color: #fff; }
 
+/* 관리자: 태그 버튼을 끌어서 순서 변경 */
+.is-admin .arc-tagbar .chip[data-tag] { cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.arc-tagbar .chip.dragging { cursor: grabbing; opacity: .6; box-shadow: var(--shadow); }
+
 /* TRPG: 마우스를 올리면 아래쪽이 어두워지며 시나리오 제목 */
 .arc-hover {
     position: absolute;
