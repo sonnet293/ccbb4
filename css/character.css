@@ -691,7 +691,21 @@
     min-height: 24px;
 }
 
-.entry-head img { flex: none; width: 20px; height: 20px; }
+.entry-head img { flex: none; width: 20px; height: 20px; object-fit: contain; }
+
+/* 이름 옆 아이콘: 관리자만 눌러서 교체 */
+.entry-ball-btn {
+    display: grid;
+    flex: none;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    transition: transform .2s;
+}
+
+.entry-ball-btn:disabled { cursor: default; }
+.entry-ball-btn:not(:disabled):hover { transform: scale(1.15); }
 
 .entry-name {
     min-width: 0;

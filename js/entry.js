@@ -11,6 +11,7 @@ export const TYPES = {
 };
 
 const COUNT = 6;
+const DEFAULT_BALL = "img/몬스터볼.png"; // 이름 옆 아이콘 기본값 (관리자는 카드마다 교체 가능)
 const MAX_TYPES = 2;
 
 // 이미지가 없을 때 보이는 몬스터볼 (124*124)
@@ -41,6 +42,7 @@ function buildCard(i) {
   const empty = h("span", { class: "img-empty" });
   empty.innerHTML = EMPTY_BALL;
 
+  const ball = h("img", { src: DEFAULT_BALL, alt: "", width: "20", height: "20" });
   const pills = h("div", { class: "entry-pills" });
   const card = h(
     "article",
@@ -51,7 +53,7 @@ function buildCard(i) {
       h(
         "header",
         { class: "entry-head" },
-        h("img", { src: "img/몬스터볼.png", alt: "", width: "20", height: "20" }),
+        h("button", { type: "button", class: "entry-ball-btn", title: "아이콘 변경", "aria-label": "아이콘 변경", disabled: true, onclick: () => changeBall(i) }, ball),
         h("span", { class: "entry-name", "data-field": "name", "data-placeholder": "포켓몬 이름" })
       ),
       h(
@@ -68,7 +70,17 @@ function buildCard(i) {
   bindFields(card, (field, value) => save(i, { [field]: value }));
   card.inner = card.firstChild;
   card.pills = pills;
+  card.ball = ball;
   return card;
+}
+
+function changeBall(i) {
+  replaceImage(
+    charId,
+    (image) => ({ entry: { [i]: { images: { ball: image } } } }),
+    entries[i]?.images?.ball?.path,
+    cards[i].ball
+  );
 }
 
 function changePhoto(i) {
@@ -161,7 +173,10 @@ search.addEventListener("keydown", (e) => {
 document.addEventListener("pointerdown", (e) => {
   if (!picker.hidden && !picker.contains(e.target) && !e.target.closest(".entry-type-edit")) closePicker();
 });
-onAdminChange((user) => !user && closePicker());
+onAdminChange((user) => {
+  if (!user) closePicker();
+  for (const card of cards) card.querySelector(".entry-ball-btn").disabled = !user;
+});
 
 // ----- 이동 -----
 // 점 하나 = 몬스터볼이 굴러가는 자리. 몬스터볼은 CSS에서 --at(현재 번호)만큼 이동 · 회전
@@ -228,6 +243,8 @@ export function showEntry(id, data) {
   entries = data.entry || {};
   cards.forEach((card, i) => {
     render(card, entries[i] || {});
+    const ballUrl = entries[i]?.images?.ball?.url || DEFAULT_BALL;
+    if (card.ball.getAttribute("src") !== ballUrl) card.ball.src = ballUrl;
     renderTypes(i);
   });
   if (!picker.hidden) renderPicker();
