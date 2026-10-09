@@ -59,25 +59,31 @@ function render() {
   list.replaceChildren(...entries.map(renderEntry));
 }
 
+// 목록은 column-reverse라 최신 글(배열 앞쪽)이 맨 아래에 붙는다.
+// 게스트 글은 왼쪽 말풍선, 주인 답글은 오른쪽 말풍선.
 function renderEntry(entry) {
   const item = h(
     "li",
     { class: "gb-item" },
     h(
       "div",
-      { class: "gb-meta" },
-      h("strong", {}, entry.name),
-      h("time", {}, formatDateTime(entry.createdAt?.toDate())),
-      isAdmin &&
-        h(
-          "span",
-          { class: "gb-tools" },
-          h("button", { type: "button", class: "text-btn", onclick: () => toggleReplyForm(item, entry) }, entry.reply ? "답글 수정" : "답글"),
-          h("button", { type: "button", class: "text-btn", onclick: () => removeEntry(entry) }, "삭제")
-        )
+      { class: "gb-row gb-guest" },
+      h("strong", { class: "gb-name" }, entry.name),
+      h("p", { class: "gb-bubble gb-msg" }, entry.message),
+      h(
+        "div",
+        { class: "gb-meta" },
+        h("time", {}, formatDateTime(entry.createdAt?.toDate())),
+        isAdmin &&
+          h(
+            "span",
+            { class: "gb-tools" },
+            h("button", { type: "button", class: "text-btn", onclick: () => toggleReplyForm(item, entry) }, entry.reply ? "답글 수정" : "답글"),
+            h("button", { type: "button", class: "text-btn", onclick: () => removeEntry(entry) }, "삭제")
+          )
+      )
     ),
-    h("p", { class: "gb-msg" }, entry.message),
-    entry.reply && h("div", { class: "gb-reply" }, entry.reply)
+    entry.reply && h("div", { class: "gb-row gb-owner" }, h("p", { class: "gb-bubble gb-reply" }, entry.reply))
   );
   return item;
 }
@@ -116,8 +122,23 @@ async function removeEntry(entry) {
   }
 }
 
+// 입력한 줄 수만큼 입력창을 늘린다 (최대 높이는 CSS에서 제한)
+function autoGrow() {
+  form.message.style.height = "auto";
+  form.message.style.height = form.message.scrollHeight + 2 + "px";
+}
+
 form.message.addEventListener("input", () => {
   count.textContent = `${form.message.value.length} / 500`;
+  autoGrow();
+});
+
+// Enter = 보내기, Shift+Enter = 줄바꿈 (한글 조합 중 Enter는 무시)
+form.message.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+    e.preventDefault();
+    form.requestSubmit();
+  }
 });
 
 form.addEventListener("submit", async (e) => {
@@ -134,6 +155,8 @@ form.addEventListener("submit", async (e) => {
     } catch {}
     form.message.value = "";
     count.textContent = "0 / 500";
+    autoGrow();
+    list.scrollTop = 0; // column-reverse에서 0 = 맨 아래
     toast("방명록이 등록되었습니다.");
   } catch (err) {
     toast("등록 실패: " + errorMessage(err), 4000);

@@ -139,16 +139,19 @@
     </main>
 
     <!--방명록 팝업-->
-    <dialog class="modal modal-wide" id="guestbookModal">
+    <dialog class="modal modal-wide gb-modal" id="guestbookModal">
         <div class="modal-body">
             <header class="modal-head">
                 <button type="button" class="icon-btn" data-close aria-label="닫기">×</button>
             </header>
+            <ul class="gb-list" id="gbList"></ul>
             <form class="gb-form" id="gbForm">
-                <input name="name" maxlength="20" placeholder="이름" required autocomplete="nickname" />
-                <textarea name="message" maxlength="500" rows="3" placeholder="남기고 싶은 말을 적어주세요" required></textarea>
-                <div class="gb-form-foot">
+                <div class="gb-form-top">
+                    <input name="name" maxlength="20" placeholder="이름" required autocomplete="nickname" />
                     <span class="gb-count" id="gbCount">0 / 500</span>
+                </div>
+                <div class="gb-form-row">
+                    <textarea name="message" maxlength="500" rows="1" placeholder="남기고 싶은 말을 적어주세요" required></textarea>
                     <button type="submit" class="gb-send" aria-label="방명록 남기기" title="남기기">
                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M0 0h24v24H0z" fill="none" />
@@ -157,7 +160,6 @@
                     </button>
                 </div>
             </form>
-            <ul class="gb-list" id="gbList"></ul>
         </div>
     </dialog>
 

@@ -267,18 +267,115 @@
     background: var(--sky-ink);
 }
 
-/* 방명록 */
-/* TODO: 입력창 방명록 위치 변경, 답장 디자인 변경 */
-.gb-form { display: flex; flex-direction: column; gap: 8px; }
-.gb-form input { width: 50%; }
-.gb-form-foot { display: flex; justify-content: space-between; align-items: center; }
+/* 방명록: 채팅형 — 목록은 아래부터 쌓이고 입력창은 하단 고정 */
+.gb-modal { height: min(640px, calc(100vh - 48px)); height: min(640px, calc(100dvh - 48px)); }
+.gb-modal .modal-body { height: 100%; gap: 10px; padding-bottom: 14px; }
+.gb-modal .modal-head { flex: none; }
+
+.gb-list {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column-reverse; /* 첫 요소(최신 글)가 맨 아래 */
+    gap: 14px;
+    margin: 0 -20px;
+    padding: 4px 20px;
+    overflow-y: auto;
+    list-style: none;
+}
+
+.gb-item { display: flex; flex-direction: column; gap: 8px; }
+
+.gb-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 78%;
+}
+
+.gb-guest { align-self: flex-start; align-items: flex-start; }
+.gb-owner { align-self: flex-end; align-items: flex-end; }
+
+.gb-name { padding-left: 4px; font-size: 12px; }
+
+.gb-bubble {
+    margin: 0;
+    padding: 9px 13px;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.gb-msg {
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 0;
+    background: #FAFCFF;
+}
+
+.gb-reply {
+    border-bottom-right-radius: 0;
+    background: var(--sky);
+    color: #112F65;
+}
+
+.gb-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-left: 4px;
+}
+
+.gb-meta time { color: var(--muted); font-size: 11px; }
+.gb-meta .gb-tools { display: flex; gap: 2px; }
+
+.text-btn {
+    padding: 0 4px;
+    border: 0;
+    background: none;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.text-btn:hover { color: var(--sky-ink); }
+
+.gb-reply-form { display: flex; gap: 6px; align-self: flex-end; width: 78%; }
+.gb-reply-form input { padding: 6px 9px; font-size: 12px; }
+.gb-reply-form button { flex: none; padding: 6px 12px; }
+
+/* 하단 입력창 */
+.gb-form {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0 -20px;
+    padding: 10px 20px 0;
+    border-top: 1px solid var(--line);
+}
+
+.gb-form-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.gb-form-top input { width: 40%; padding: 6px 10px; font-size: 12px; }
 .gb-count { font-size: 11px; color: var(--muted); }
 
+.gb-form-row { display: flex; align-items: flex-end; gap: 6px; }
+
+.gb-form-row textarea {
+    flex: 1;
+    max-height: 120px;
+    border-radius: 18px;
+    padding: 9px 14px;
+    line-height: 1.5;
+    resize: none;
+}
+
 .gb-send {
+    flex: none;
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     padding: 0;
     border: 0;
     border-radius: 50%;
@@ -291,66 +388,7 @@
 .gb-send:hover { transform: translate(2px, -2px); }
 .gb-send:disabled { opacity: .5; cursor: default; transform: none; }
 
-.gb-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.gb-item {
-    padding: 12px 14px;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    background: #FAFCFF;
-}
-
-.gb-meta {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    margin-bottom: 6px;
-    font-size: 12px;
-}
-
-.gb-meta strong { font-size: 13px; }
-.gb-meta time { color: var(--muted); font-size: 11px; }
-.gb-meta .gb-tools { margin-left: auto; display: flex; gap: 4px; }
-
-.text-btn {
-    padding: 0 4px;
-    border: 0;
-    background: none;
-    font-size: 11px;
-    color: var(--muted);
-}
-
-.text-btn:hover { color: var(--sky-ink); }
-
-.gb-msg {
-    margin: 0;
-    font-size: 13px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
-.gb-reply {
-    margin-top: 8px;
-    padding: 8px 10px;
-    border-left: 2px solid var(--sky-deep);
-    background: rgba(217, 229, 247, .45);
-    font-size: 12px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
-.gb-reply-form { display: flex; gap: 6px; margin-top: 8px; }
-.gb-reply-form input { padding: 6px 9px; font-size: 12px; }
-.gb-reply-form button { flex: none; padding: 6px 12px; }
+.gb-list .gb-empty { margin: auto 0; }
 
 .gb-empty,
 .event-empty {
@@ -445,7 +483,7 @@
     .subtitle { font-size: 11px; }
     .subtitle .kanji { font-size: 17px; }
 
-    .gb-form input { width: 100%; }
+    .gb-form-top input { width: 60%; }
 }
 
 /* 작은 모바일 (~560px): 배너 세로 배치 */
