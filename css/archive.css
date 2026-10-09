@@ -124,6 +124,38 @@
 .arc-memo[contenteditable]:empty::before { color: #fff; }
 .arc-memo[contenteditable]:focus { white-space: pre-wrap; text-overflow: clip; }
 
+/* 갤러리 태그: 메모 바로 위. 관리자에게만 보임 (방문자는 위쪽 필터로 사용) */
+.arc-tags {
+    position: absolute;
+    right: 8px;
+    bottom: 26px;
+    z-index: 2;
+    max-width: calc(100% - 16px);
+    padding: 0 2px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #D9E5F7;
+    text-shadow: 0 0 3px rgba(0, 0, 0, .55), 0 1px 2px rgba(0, 0, 0, .4);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.arc-tags[contenteditable]:empty::before { color: #D9E5F7; }
+.arc-tags[contenteditable]:focus { white-space: pre-wrap; text-overflow: clip; }
+
+/* 해시태그 필터: 목록 위 한 줄 (넘치면 줄바꿈) */
+.arc-tagbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
+}
+
+.arc-tagbar .chip { transition: background .2s, color .2s; }
+.arc-tagbar .chip[aria-pressed="true"] { background: var(--sky-ink); border-color: var(--sky-ink); color: #fff; }
+
 /* TRPG: 마우스를 올리면 아래쪽이 어두워지며 시나리오 제목 */
 .arc-hover {
     position: absolute;
@@ -295,6 +327,7 @@
     .arc-tile .admin-tools button { padding: 3px 8px; font-size: 11px; }
     .arc-tile .card-del { top: 6px; right: 6px; width: 22px; height: 22px; font-size: 16px; }
     .arc-memo { right: 6px; bottom: 6px; max-width: calc(100% - 12px); }
+    .arc-tags { right: 6px; bottom: 24px; max-width: calc(100% - 12px); }
     .sc-text { padding: 20px 20px 18px; }
     .sc-title { font-size: 20px; }
     .arc-close { width: 32px; height: 32px; font-size: 28px; }

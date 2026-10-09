@@ -49,6 +49,7 @@ function createTile(id, entry) {
     h("button", { type: "button", class: "tile-open", "aria-label": `이미지 #${id} 크게 보기`, onclick: () => openViewer(entry.data) }),
     delBtn(() => removeTile(id, entry.data)),
     imageSlot("243 × 243"),
+    h("span", { class: "arc-tags admin-only", "data-field": "tags", "data-placeholder": "#태그", spellcheck: "false" }),
     h("span", { class: "arc-memo", "data-field": "memo", "data-placeholder": "메모" })
   );
 }
@@ -56,7 +57,12 @@ function createTile(id, entry) {
 function mountTile(id) {
   const entry = { data: {} };
   const tile = (entry.tile = createTile(id, entry));
-  bindFields(tile, (field, value) => saveField(id, field, value));
+  bindFields(tile, (field, value) => {
+    if (field !== "tags") return saveField(id, field, value);
+    const tags = formatTags(value);
+    tile.querySelector(".arc-tags").textContent = tags; // 같은 값이면 스냅샷이 안 오므로 바로 정리
+    saveField(id, field, tags);
+  });
   bindImages(tile, () => id, () => entry.data);
   entry.stop = watchCharacter(id, (d) => {
     entry.data = d;
@@ -67,6 +73,7 @@ function mountTile(id) {
       tile.querySelector(".tile-open").setAttribute("aria-label", d.title || `시나리오 #${id}`);
     }
     if (current === id) render(scenario, d);
+    if (KIND === "gallery") renderTagBar();
   });
   return entry;
 }
@@ -89,6 +96,7 @@ function renderAll(data) {
     }
     if (listEl.children[i] !== entry.tile) listEl.insertBefore(entry.tile, listEl.children[i] || null);
   });
+  if (KIND === "gallery") renderTagBar();
   updateFade();
 
   if (pendingScroll && tiles.has(pendingScroll)) reveal(pendingScroll);
@@ -97,6 +105,33 @@ function renderAll(data) {
 function reveal(id) {
   pendingScroll = null;
   tiles.get(id).tile.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+
+// ----- 갤러리: 해시태그 필터 -----
+// 태그는 "#풍경 #낙서" 형태의 글자로 저장 (띄어쓰기 · 쉼표 · # 어느 것으로 나눠도 됨)
+const parseTags = (text = "") => [...new Set(text.split(/[\s,#]+/).filter(Boolean))];
+const formatTags = (text) => parseTags(text).map((t) => "#" + t).join(" ");
+
+let activeTag = null; // 선택된 태그 (null이면 전체)
+const tagBar = h("div", { class: "arc-tagbar", role: "toolbar", "aria-label": "해시태그 필터", hidden: true });
+if (KIND === "gallery") document.querySelector(".cards-head").prepend(tagBar);
+
+const tagChip = (tag, label) =>
+  h("button", { type: "button", class: "chip", "aria-pressed": String(activeTag === tag), onclick: () => setTag(tag) }, label);
+
+function setTag(tag) {
+  activeTag = activeTag === tag ? null : tag; // 같은 태그를 다시 누르면 해제
+  renderTagBar();
+  listEl.scrollTop = 0;
+}
+
+function renderTagBar() {
+  const all = [...new Set([...tiles.values()].flatMap((e) => parseTags(e.data.tags)))].sort((a, b) => a.localeCompare(b, "ko"));
+  if (activeTag && !all.includes(activeTag)) activeTag = null; // 선택한 태그가 사라지면 전체로
+  tagBar.hidden = !all.length;
+  tagBar.replaceChildren(tagChip(null, "전체"), ...all.map((t) => tagChip(t, "#" + t)));
+  for (const e of tiles.values()) e.tile.hidden = !!activeTag && !parseTags(e.data.tags).includes(activeTag);
+  updateFade();
 }
 
 // ----- 하단 그라데이션: 스크롤이 끝나면 사라짐 -----
@@ -139,6 +174,7 @@ addBtn.addEventListener("click", async () => {
   addBtn.disabled = true;
   try {
     const id = await addTile();
+    if (activeTag) setTag(activeTag); // 필터 해제 → 새 타일이 보이게
     if (tiles.has(id)) reveal(id);
     else pendingScroll = id;
     toast(`${LABEL}이(가) 추가되었습니다.`);
