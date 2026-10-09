@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="css/modal.css">
     <link rel="stylesheet" href="css/player.css">
     <link rel="stylesheet" href="css/sub.css">
-    <link rel="stylesheet" href="css/universe.css">
-    <title>UNIVERSE</title>
+    <link rel="stylesheet" href="css/relationship.css">
+    <title>RELATIONSHIP</title>
 </head>
-<body data-collection="universe">
+<body data-collection="relationship">
 
     <header class="site-header">
         <a href="index.html" class="site-logo" aria-label="시시비비">
@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <a href="universe.html">세계관</a>
-                <a href="relationship.html">관계란</a>
+                <a href="relationship.html" aria-current="page">관계란</a>
                 <div class="gnb-item">
                     <a href="archive.html">아카이브</a>
                     <div class="gnb-sub">
@@ -44,53 +44,48 @@
         </div>
     </header>
 
-    <main class="page">
+    <main class="page page-detail">
 
         <!--본문 영역-->
         <div class="page-body">
+            <article class="pair" id="pair">
 
-            <!--세계관 메인-->
-            <section class="uni" data-view="home">
-                <!--상단: 기차 이미지 + 소개 글-->
-                <div class="uni-hero">
-                    <img class="uni-hero-img" src="img/기차.gif" alt="" width="264" height="264">
-                    <div class="uni-hero-text">
-                        <div class="uni-hero-copy">
-                            <h2>Pokémon</h2>
-                            <span class="uni-lead">이 별에 사는 세상에서 가장 신기한 생물, 포켓몬스터. 줄여서 말하면 포켓몬!</span>
-                            <span class="uni-desc">세계관에 대한 개요를 짧게 요약해서 몇 줄 작성하는 공간</span>
+                <!--뒤로가기-->
+                <a href="relationship.html" class="pair-back" aria-label="목록으로" title="목록으로">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 1024 1024" aria-hidden="true">
+                        <path d="M0 0h1024v1024H0z" fill="none" />
+                        <path fill="#d9e5f7" d="M685.2 104.7a64 64 0 0 1 0 90.5L368.4 512l316.8 316.8a64 64 0 0 1-90.4 90.5l-362.1-362a64 64 0 0 1 0-90.5l362-362.1a64 64 0 0 1 90.5 0" />
+                    </svg>
+                </a>
+
+                <div class="pair-body">
+                    <!--좌측: 이미지 + 등장인물-->
+                    <div class="pair-side">
+                        <div class="img-slot pair-image" data-image="image">
+                            <img alt="">
+                            <span class="img-empty">3 : 2</span>
+                            <div class="admin-tools"><button type="button" data-action="image">이미지 변경</button></div>
                         </div>
+                        <div class="pair-cast">
+                            <h5>등장인물</h5>
+                            <span data-field="cast" data-placeholder="이름, 이름, 이름"></span>
+                        </div>
+                    </div>
+
+                    <!--우측: 글 박스-->
+                    <div class="pair-text">
+                        <header class="pair-head">
+                            <h2 class="pair-name" data-field="pairName" data-placeholder="Pair Name"></h2>
+                            <h3 class="pair-title" data-field="pair" data-placeholder="페어명"></h3>
+                            <!--해시태그: 관리자는 한 칸에 띄어쓰기로 입력, 방문자에겐 태그마다 h5로 표시-->
+                            <h5 class="pair-tags-edit admin-only" data-field="tags" data-placeholder="#해시태그 #해시태그"></h5>
+                            <div class="pair-tags"></div>
+                        </header>
+                        <span class="pair-story" data-field="story" data-placeholder="내용" data-multiline></span>
                     </div>
                 </div>
 
-                <!--하단: 페이지 이동 버튼 + 캐릭터 이미지-->
-                <div class="uni-bottom">
-                    <nav class="uni-links" aria-label="세계관 메뉴">
-                        <a href="#universe" class="uni-link">
-                            <span>✦ 세계관 개요</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M0 0h24v24H0z" fill="none" />
-                                <path fill="#3f3f3f" d="M10 19a1 1 0 0 1-.64-.23a1 1 0 0 1-.13-1.41L13.71 12L9.39 6.63a1 1 0 0 1 .15-1.41a1 1 0 0 1 1.46.15l4.83 6a1 1 0 0 1 0 1.27l-5 6A1 1 0 0 1 10 19" />
-                            </svg>
-                        </a>
-                        <a href="#story" class="uni-link">
-                            <span>✦ 스토리 라인</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M0 0h24v24H0z" fill="none" />
-                                <path fill="#3f3f3f" d="M10 19a1 1 0 0 1-.64-.23a1 1 0 0 1-.13-1.41L13.71 12L9.39 6.63a1 1 0 0 1 .15-1.41a1 1 0 0 1 1.46.15l4.83 6a1 1 0 0 1 0 1.27l-5 6A1 1 0 0 1 10 19" />
-                            </svg>
-                        </a>
-                    </nav>
-                    <img class="uni-art" src="img/세계관.png" alt="" width="529" height="224">
-                </div>
-            </section>
-
-            <!--세계관 개요 (#universe, 추후 js로 생성)-->
-            <section class="uni-page" data-view="universe" hidden></section>
-
-            <!--스토리 라인 (#story, 추후 js로 생성)-->
-            <section class="uni-page" data-view="story" hidden></section>
-
+            </article>
         </div>
 
         <!--뮤직플레이어-->
@@ -137,7 +132,7 @@
 
     </main>
 
-    <script type="module" src="js/universe.js"></script>
+    <script type="module" src="js/relationship-detail.js"></script>
 
 </body>
 </html>

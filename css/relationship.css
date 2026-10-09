@@ -1,0 +1,306 @@
+/* 관계란: 이미지 + 제목 · 해시태그 · 내용 카드를 2 × 2로 배치 (js/relationship.js에서 생성)
+   화면 폭에 따라: 2열 → 1열 → 작은 이미지 → 이미지 위 · 글 아래 */
+
+/* character.css의 AU 목록 폭 규칙(.cards:has(.cards-head))을 덮어씀 */
+.cards.rel { width: min(100%, 936px); }
+
+.rel-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rel-list[data-ready]:empty::before {
+    content: "아직 카드가 없습니다.";
+    grid-column: 1 / -1;
+    padding: 40px 0;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* 카드: 배경 없이 이미지 + 글. 전체를 덮는 링크(.card-link)로 상세 페이지 이동 */
+.rel-card {
+    --img-w: 240px;
+    position: relative;
+    display: flex;
+    gap: 20px;
+    min-width: 0;
+    transition: transform .2s ease;
+}
+
+.rel-card [contenteditable] { position: relative; z-index: 2; }
+
+.rel-image {
+    flex: none;
+    width: var(--img-w);
+    aspect-ratio: 3 / 2;
+    border-radius: 4px;
+    transition: box-shadow .2s ease;
+}
+
+/* 터치 화면에선 누른 뒤 떠 있는 상태로 남지 않도록 마우스일 때만 */
+@media (hover: hover) {
+    .rel-card:hover { transform: translateY(-3px); }
+    .rel-card:hover .card-del { opacity: 1; }
+    .rel-card:hover .rel-image { box-shadow: var(--shadow); }
+}
+
+/* 글이 길면 카드가 아래로 늘어남 (옆 카드와 겹치지 않음) */
+.rel-text {
+    flex: 1;
+    min-width: 0;
+    min-height: calc(var(--img-w) * 2 / 3);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 6px 28px 0 0; /* 오른쪽: 삭제(×) 버튼 자리 */
+}
+
+.rel-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.04em;
+    color: #112F65;
+}
+
+.rel-tags {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #9AC6FF;
+}
+
+.rel-tags[contenteditable]:empty::before { color: #9AC6FF; }
+
+.rel-body {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4; /* 긴 내용은 상세 페이지에서 */
+    line-clamp: 4;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #444;
+}
+
+/* 관리자가 수정할 땐 전체 내용이 보이게 */
+.rel-body[contenteditable]:focus { display: block; overflow: visible; }
+
+.rel-card .card-del { top: 6px; right: 0; }
+
+/* 두 칸이 나란히 들어갈 폭이 없으면 한 줄에 하나 */
+@media (max-width: 960px) {
+    .cards.rel { width: min(100%, 720px); }
+    .rel-list { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+}
+
+/* 태블릿 세로 · 큰 휴대폰: 이미지를 줄여 글 칸 확보 */
+@media (max-width: 600px) {
+    .rel-list { gap: 20px; }
+    .rel-card { --img-w: 180px; gap: 14px; }
+    .rel-text { gap: 6px; padding-top: 2px; }
+    .rel-title { font-size: 18px; }
+    .rel-body { -webkit-line-clamp: 3; line-clamp: 3; }
+}
+
+/* 휴대폰: 이미지 위, 글 아래 */
+@media (max-width: 440px) {
+    .rel-list { gap: 26px; }
+    .rel-card { flex-direction: column; gap: 10px; }
+    .rel-image { width: 100%; }
+    .rel-text { min-height: 0; padding: 0 2px; }
+    .rel-card .card-del { top: 8px; right: 8px; } /* 이미지 오른쪽 위 */
+}
+
+/* ===== 관계 상세 페이지 (relationship-detail.html) ===== */
+@font-face {
+    font-family: "Pair";
+    src: url("../font/pair.otf") format("opentype");
+    font-display: swap;
+}
+
+.page-detail { --page-top: 30px; }
+
+/* 이미지 626 + 간격 42 + 글 박스 493 = 1161. 화면이 좁아지면 같은 비율로 줄어듦 */
+.pair {
+    --u: min(1px, calc(100cqw / 1161));
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: calc(1161 * var(--u));
+    animation: fade-up var(--enter-dur) var(--ease-out) .3s backwards;
+}
+
+.pair-back {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-left: -6px;
+    font-size: 30px;
+    filter: drop-shadow(0 1px 2px rgba(80, 110, 160, .35));
+    transition: transform .2s ease;
+}
+
+@media (hover: hover) {
+    .pair-back:hover { transform: translateX(-2px); }
+}
+.pair-back:focus-visible { outline: 2px solid var(--sky-ink); outline-offset: 2px; }
+
+.pair-body {
+    display: flex;
+    align-items: flex-start;
+    gap: calc(42 * var(--u));
+}
+
+.pair-side {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: calc(626 * var(--u));
+}
+
+.pair-image {
+    width: 100%;
+    aspect-ratio: 3 / 2; /* 626 × 417 */
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+/* ✦ 등장인물  이름, 이름, 이름 */
+.pair-cast {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: 14px;
+    color: #444;
+}
+
+.pair-cast h5 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #112F65;
+    white-space: nowrap;
+}
+
+.pair-cast h5::before {
+    content: "✦";
+    margin-right: 6px;
+    color: #69A4F0;
+}
+
+.pair-cast span { flex: 1; min-width: min(120px, 100%); }
+
+/* 우측 글 박스 (배경 없음) */
+.pair-text {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: calc(493 * var(--u));
+    height: calc(374 * var(--u));
+    min-height: 300px;
+}
+
+.pair-head {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 4px 0 4px 18px;
+    border-left: 5px solid #69A4F0;
+}
+
+.pair-name {
+    margin: 0;
+    font-family: "Pair", var(--serif);
+    font-size: clamp(32px, calc(44 * var(--u)), 44px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: #112F65;
+}
+
+.pair-name[contenteditable]:empty::before { font-family: inherit; }
+
+.pair-title {
+    margin: 0;
+    font-family: var(--font);
+    font-size: 17px;
+    font-weight: 700;
+    color: #112F65;
+}
+
+.pair-tags,
+.pair-tags-edit {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin: 2px 0 0;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    color: #9AC6FF;
+}
+
+.pair-tags h5 { margin: 0; font: inherit; }
+.pair-tags:empty { display: none; }
+.pair-tags-edit[contenteditable]:empty::before { color: #9AC6FF; }
+
+/* 관리자는 한 칸에서 입력 · 수정, 방문자는 태그별 표시 */
+body.is-admin .pair-tags { display: none; }
+.pair-tags-edit { display: block; line-height: 1.6; }
+
+.pair-story {
+    flex: 1;
+    min-height: 5.4em; /* 제목이 길어 줄이 늘어도 내용 칸이 사라지지 않게 */
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding-right: 6px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #444;
+}
+
+/* 태블릿 · 휴대폰: 이미지 위, 글 아래 (글 박스는 내용 길이만큼) */
+@media (max-width: 900px) {
+    .pair { width: min(100%, 626px); gap: 12px; }
+    .pair-body { flex-direction: column; gap: 28px; }
+    .pair-side,
+    .pair-text { width: 100%; }
+    .pair-text { height: auto; min-height: 0; gap: 18px; }
+    .pair-name { font-size: 40px; }
+    .pair-story { flex: none; min-height: 0; overflow: visible; padding-right: 0; }
+}
+
+@media (max-width: 600px) {
+    .pair-body { gap: 22px; }
+    .pair-side { gap: 12px; }
+    .pair-head { padding-left: 14px; border-left-width: 4px; }
+    .pair-name { font-size: 34px; }
+    .pair-title { font-size: 16px; }
+    .pair-cast,
+    .pair-cast h5 { font-size: 13px; }
+}
+
+@media (max-width: 380px) {
+    .pair-name { font-size: 30px; }
+    .pair-story { font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rel-card,
+    .rel-image,
+    .pair-back { transition: none; }
+    .pair { animation: none; }
+}

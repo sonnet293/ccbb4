@@ -1,0 +1,336 @@
+/* 아카이브: 갤러리(archive.html) · TRPG(trpg.html) 타일 목록 (js/archive.js에서 생성)
+   갤러리: 243 × 243 타일 3열 / TRPG: 3 : 2 타일 2열 (전체 너비는 같음)
+   목록 안에서 스크롤, 끝나지 않았으면 아래쪽에 반투명 그라데이션 */
+
+/* 타일 243 × 3 + 간격 20 × 2 = 769, 오른쪽에 스크롤바 자리 */
+.cards.arc {
+    --tile: 243px;
+    --gap: 20px;
+    --bar: 14px;
+    width: min(100%, calc(var(--tile) * 3 + var(--gap) * 2 + var(--bar)));
+}
+
+.arc-scroll { position: relative; }
+
+.arc-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-content: start;
+    gap: var(--gap);
+    height: clamp(360px, calc(100vh - 240px), 860px);
+    height: clamp(360px, calc(100dvh - 240px), 860px);
+    margin: 0;
+    padding: 4px calc(var(--bar) - 6px) 24px 0; /* 위: 떠오르는 효과 자리, 아래: 마지막 줄이 그라데이션에 가리지 않게 */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+    scrollbar-width: thin;
+    scrollbar-color: #9AC6FF transparent;
+    scrollbar-gutter: stable;
+}
+
+.arc-trpg .arc-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.arc-list::-webkit-scrollbar { width: 6px; }
+.arc-list::-webkit-scrollbar-thumb { border-radius: 3px; background: #9AC6FF; }
+.arc-list::-webkit-scrollbar-track { background: transparent; }
+
+.arc-list[data-ready]:empty::before {
+    content: "아직 아무것도 없습니다.";
+    grid-column: 1 / -1;
+    padding: 40px 0;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* 아직 스크롤이 남았다는 표시 (끝까지 내리면 사라짐) */
+.arc-scroll::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: var(--bar);
+    bottom: 0;
+    height: 90px;
+    background: linear-gradient(to bottom, rgba(238, 241, 247, 0), rgba(238, 241, 247, .9));
+    pointer-events: none;
+    transition: opacity .25s ease;
+}
+
+.arc-scroll.at-end::after { opacity: 0; }
+
+/* ----- 타일 ----- */
+.arc-tile {
+    container-type: inline-size; /* 호버 제목 크기를 타일 폭에 맞춤 */
+    position: relative;
+    min-width: 0;
+    border-radius: 4px;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.arc-image {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 4px;
+}
+
+.arc-trpg .arc-image { aspect-ratio: 3 / 2; }
+
+/* 타일 전체를 덮는 버튼 (갤러리: 크게 보기, TRPG: 상세 창) */
+.tile-open {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: 0;
+    border: 0;
+    border-radius: inherit;
+    background: none;
+}
+
+.tile-open:focus-visible { outline: 2px solid var(--sky-ink); outline-offset: 2px; }
+
+/* 관리자 도구: 이미지 버튼은 왼쪽 위, 삭제(×)는 오른쪽 위 (오른쪽 아래는 메모 자리) */
+.arc-tile .admin-tools { top: 8px; left: 8px; right: auto; bottom: auto; z-index: 3; }
+.arc-tile .card-del { z-index: 3; }
+
+@media (hover: hover) {
+    .arc-tile:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    .arc-tile:hover .admin-tools,
+    .arc-tile:hover .card-del { opacity: 1; }
+}
+
+/* 갤러리 메모: 오른쪽 아래 작은 꼬리표. 관리자는 눌러서 바로 수정 */
+.arc-memo {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    z-index: 2;
+    max-width: calc(100% - 16px);
+    padding: 0 2px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #fff;
+    text-shadow: 0 0 3px rgba(0, 0, 0, .55), 0 1px 2px rgba(0, 0, 0, .4); /* 배경 없이도 사진 위에서 읽히게 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.arc-memo:not([contenteditable]) { pointer-events: none; } /* 방문자: 눌러도 이미지가 열리게 */
+.arc-memo:empty:not([contenteditable]) { display: none; }
+.arc-memo[contenteditable]:empty::before { color: #fff; }
+.arc-memo[contenteditable]:focus { white-space: pre-wrap; text-overflow: clip; }
+
+/* TRPG: 마우스를 올리면 아래쪽이 어두워지며 시나리오 제목 */
+.arc-hover {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    height: 42%;
+    padding: 6cqw 7cqw 0;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(to bottom, rgba(10, 20, 40, 0), rgba(10, 20, 40, .45) 55%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+}
+
+.arc-hover-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    font-size: clamp(12px, 4.4cqw, 16px);
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    color: #fff;
+}
+
+.arc-tile:hover .arc-hover,
+.arc-tile:focus-within .arc-hover { opacity: 1; }
+
+/* 터치 화면은 hover가 없으므로 제목 항상 표시 */
+@media (hover: none) {
+    .arc-hover { opacity: 1; }
+}
+
+/* ----- 크게 보기 · 시나리오 상세 창 ----- */
+.arc-dialog {
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 0;
+    background: none;
+    overflow: visible;
+}
+
+.arc-dialog::backdrop { background: rgba(0, 0, 0, .72); }
+.arc-dialog[open] { animation: pop .18s ease-out; }
+
+.arc-frame { position: relative; }
+
+/* 닫기 버튼: 이미지 · 박스 바깥 오른쪽 위 */
+.arc-close {
+    position: absolute;
+    right: -4px;
+    bottom: calc(100% + 6px);
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 32px;
+    line-height: 1;
+    color: #fff;
+    opacity: .85;
+    transition: opacity .2s, transform .2s;
+}
+
+.arc-close:hover { opacity: 1; transform: rotate(90deg); }
+.arc-close:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 50%; }
+
+/* 갤러리: 원본 비율 그대로 화면에 맞춤 */
+.viewer-img {
+    display: block;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 120px);
+    max-height: calc(100dvh - 120px);
+    border-radius: 4px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
+}
+
+/* TRPG: 669 × 730 (이미지 669 × 399 + 글 669 × 331). 화면이 작으면 글 칸 안에서 스크롤 */
+.sc-box {
+    display: flex;
+    flex-direction: column;
+    width: min(669px, calc(100vw - 32px));
+    max-height: calc(100vh - 100px);
+    max-height: calc(100dvh - 100px);
+    overflow-x: hidden;
+    overflow-y: auto; /* 아주 낮은 화면: 박스 전체가 스크롤 */
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
+}
+
+/* 이미지와 글 칸 사이 구분선. 화면이 낮으면 이미지 높이를 줄여 글 칸 확보 */
+.sc-box .arc-image {
+    flex: none;
+    aspect-ratio: 669 / 399;
+    max-height: calc((100vh - 100px) * .55);
+    max-height: calc((100dvh - 100px) * .55);
+    border-radius: 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.sc-text {
+    flex: 0 1 331px;
+    min-height: min(180px, calc((100dvh - 100px) * .45));
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 26px 30px 24px;
+}
+
+.sc-title {
+    flex: none;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.04em;
+    color: #112F65;
+}
+
+.sc-writer {
+    flex: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+}
+
+.sc-writer[contenteditable]:empty::before { color: #bbb; }
+
+.sc-summary {
+    flex: 1;
+    min-height: 3.6em; /* 개요가 최소 두 줄은 보이게 */
+    margin-top: 12px;
+    padding-right: 8px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #444;
+    scrollbar-width: thin;
+    scrollbar-color: #9AC6FF transparent;
+}
+
+.sc-summary::-webkit-scrollbar { width: 6px; }
+.sc-summary::-webkit-scrollbar-thumb { border-radius: 3px; background: #9AC6FF; }
+
+/* ----- 화면 폭 · 높이에 따라 ----- */
+/* 터치 화면: 목록 끝에서 손가락을 계속 움직이면 페이지가 이어서 스크롤되게 */
+@media (hover: none) {
+    .arc-list { overscroll-behavior: auto; }
+}
+
+/* 태블릿 세로 · 큰 휴대폰 */
+@media (max-width: 760px) {
+    .arc-list { height: clamp(320px, calc(100dvh - 200px), 860px); }
+}
+
+@media (max-width: 600px) {
+    .cards.arc { --gap: 14px; --bar: 10px; }
+    .arc-scroll::after { height: 64px; }
+    .arc-hover { height: 50%; }
+    .arc-tile .admin-tools { top: 6px; left: 6px; }
+    .arc-tile .admin-tools button { padding: 3px 8px; font-size: 11px; }
+    .arc-tile .card-del { top: 6px; right: 6px; width: 22px; height: 22px; font-size: 16px; }
+    .arc-memo { right: 6px; bottom: 6px; max-width: calc(100% - 12px); }
+    .sc-text { padding: 20px 20px 18px; }
+    .sc-title { font-size: 20px; }
+    .arc-close { width: 32px; height: 32px; font-size: 28px; }
+}
+
+/* 휴대폰: 갤러리 2열, TRPG 1열 */
+@media (max-width: 440px) {
+    .cards.arc { --gap: 10px; --bar: 8px; }
+    .arc-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .arc-trpg .arc-list { grid-template-columns: minmax(0, 1fr); }
+    .arc-hover { height: 42%; }
+    .sc-text { padding: 16px 16px 14px; gap: 4px; }
+    .sc-title { font-size: 18px; }
+    .sc-writer { font-size: 12px; }
+    .sc-summary { margin-top: 8px; font-size: 13px; line-height: 1.7; }
+}
+
+/* 아주 좁은 화면 (갤럭시 폴드 등) */
+@media (max-width: 320px) {
+    .arc-list { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* 가로로 눕힌 휴대폰 등 낮은 화면: 창 위아래 여백 줄이기 */
+@media (max-height: 500px) {
+    .arc-list { height: max(240px, calc(100dvh - 120px)); }
+    .viewer-img { max-height: calc(100dvh - 72px); }
+    .sc-box { max-height: calc(100dvh - 64px); }
+    .sc-box .arc-image { max-height: calc((100dvh - 64px) * .5); }
+    .sc-text { min-height: 0; padding: 14px 20px; }
+    .sc-title { font-size: 18px; }
+    .arc-close { bottom: calc(100% + 2px); width: 28px; height: 28px; font-size: 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .arc-tile,
+    .arc-hover,
+    .arc-close,
+    .arc-scroll::after { transition: none; }
+}
