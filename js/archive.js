@@ -57,6 +57,7 @@ function createTile(id, entry) {
 function mountTile(id) {
   const entry = { data: {} };
   const tile = (entry.tile = createTile(id, entry));
+  tile.dataset.id = id;
   bindFields(tile, (field, value) => {
     if (field !== "tags") return saveField(id, field, value);
     const tags = formatTags(value);
@@ -98,6 +99,7 @@ function renderAll(data) {
     if (listEl.children[i] !== entry.tile) listEl.insertBefore(entry.tile, listEl.children[i] || null);
   });
   if (KIND === "gallery") renderTagBar();
+  if (picked.some((id) => !tiles.has(id))) setPicked(picked.filter((id) => tiles.has(id))); // 고른 타일이 삭제됨
   updateFade();
 
   reveal();
@@ -191,6 +193,66 @@ async function saveTagOrder(order) {
     await setDoc(listRef, { tagOrder: order }, { merge: true });
     toast("태그 순서가 저장되었습니다.");
   } catch (err) {
+    toast("저장 실패: " + errorMessage(err), 4000);
+  }
+}
+
+// ----- 관리자: 두 타일 자리 바꾸기 -----
+// '순서 변경' → 타일 두 개를 차례로 고르고 '완료'를 누르면 서로 자리가 바뀜
+let picked = []; // 고른 타일 번호 (최대 2개)
+const swapStart = h("button", { type: "button", class: "chip", onclick: () => setSwapMode(true) }, "순서 변경");
+const swapHint = h("span", { class: "arc-swap-hint" });
+const swapDone = h("button", { type: "button", class: "chip is-primary", onclick: () => swapTiles() }, "완료");
+const swapCancel = h("button", { type: "button", class: "chip", onclick: () => setSwapMode(false) }, "취소");
+const swapBar = h("div", { class: "arc-swap admin-only" }, swapStart, swapHint, swapDone, swapCancel);
+document.querySelector(".cards-head").insertBefore(swapBar, document.querySelector("[data-add]"));
+setSwapMode(false);
+
+function setSwapMode(on) {
+  listEl.classList.toggle("swapping", on);
+  swapStart.hidden = on;
+  swapHint.hidden = swapDone.hidden = swapCancel.hidden = !on;
+  setPicked([]);
+}
+
+function setPicked(ids) {
+  picked = ids;
+  for (const [id, e] of tiles) {
+    const n = picked.indexOf(id);
+    if (n < 0) delete e.tile.dataset.pick;
+    else e.tile.dataset.pick = n + 1;
+  }
+  swapHint.textContent = ["첫 번째 " + LABEL + " 선택", "바꿀 " + LABEL + " 선택", "완료하기"][picked.length];
+  swapDone.disabled = picked.length < 2;
+}
+
+listEl.addEventListener("click", (e) => {
+  if (!listEl.classList.contains("swapping")) return;
+  const id = e.target.closest(".arc-tile")?.dataset.id;
+  if (!id) return;
+  if (picked.includes(id)) setPicked(picked.filter((x) => x !== id)); // 다시 누르면 선택 해제
+  else setPicked([picked[0] ?? id, ...(picked.length ? [id] : [])]); // 두 번째는 새로 누른 것으로 교체
+});
+
+addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && listEl.classList.contains("swapping")) setSwapMode(false);
+});
+
+async function swapTiles() {
+  const [a, b] = picked;
+  swapDone.disabled = true;
+  try {
+    await runTransaction(db, async (tx) => {
+      const ids = [...withDefaults((await tx.get(listRef)).data())[KIND]];
+      const i = ids.indexOf(a), j = ids.indexOf(b);
+      if (i < 0 || j < 0) throw new Error(`${LABEL}이(가) 이미 삭제되었습니다.`);
+      [ids[i], ids[j]] = [ids[j], ids[i]];
+      tx.set(listRef, { [KIND]: ids }, { merge: true });
+    });
+    setSwapMode(false);
+    toast("순서가 바뀌었습니다.");
+  } catch (err) {
+    swapDone.disabled = false;
     toast("저장 실패: " + errorMessage(err), 4000);
   }
 }

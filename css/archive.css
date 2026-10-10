@@ -160,6 +160,48 @@
 .is-admin .arc-tagbar .chip[data-tag] { cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
 .arc-tagbar .chip.dragging { cursor: grabbing; opacity: .6; box-shadow: var(--shadow); }
 
+/* 관리자: 두 타일 자리 바꾸기 (+ 버튼 왼쪽) */
+.arc-swap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.arc-swap + .card-add { margin-left: 0; }
+.arc-swap [hidden] { display: none; }
+.arc-swap .chip { white-space: nowrap; }
+.arc-swap .chip.is-primary { background: var(--sky-ink); border-color: var(--sky-ink); color: #fff; }
+.arc-swap .chip:disabled { opacity: .4; cursor: default; }
+.arc-swap-hint { font-size: 12px; color: var(--muted); }
+
+/* 고르는 중: 타일 안 버튼 · 글칸은 눌리지 않고 타일 자체가 선택됨 */
+.arc-list.swapping .arc-tile { cursor: pointer; }
+.arc-list.swapping .arc-tile > * { pointer-events: none; }
+.arc-list.swapping .admin-tools,
+.arc-list.swapping .card-del { display: none; }
+
+.arc-tile[data-pick] { outline: 3px solid var(--sky-ink); outline-offset: 2px; }
+.arc-tile[data-pick]::after {
+    content: attr(data-pick);
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--sky-ink);
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
+}
+
 /* TRPG: 마우스를 올리면 아래쪽이 어두워지며 시나리오 제목 */
 .arc-hover {
     position: absolute;
